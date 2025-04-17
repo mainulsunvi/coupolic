@@ -1,35 +1,99 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+/* .inner-container {
+  background-color: azure;
+  padding: 10px 30px;
+} */
+ 
+:root {
+  --coupolic-palette-950: #1e1a4d;
+  --coupolic-palette-900: #312c85;
+  --coupolic-palette-800: #372aac;
+  --coupolic-palette-700: #432dd7;
+  --coupolic-palette-600: #4f39f6;
+  --coupolic-palette-500: #615fff;
+  --coupolic-palette-400: #7c86ff;
+  --coupolic-palette-300: #a3b3ff;
+  --coupolic-palette-200: #c6d2ff;
+  --coupolic-palette-100: #e0e7ff;
+  --coupolic-palette-50: #eef2ff;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+.coupolic-container {
+  width: 1000px;
+  /* width: 1200px; */
+  margin: 48px auto;
+  
+  padding: 48px;
+  border-radius: 20px;
+  border: 1px solid var(--coupolic-palette-200);
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.nav-items {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.nav-item {
+  padding: 6px 16px;
+  /* border: 1px solid; */
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--coupolic-palette-900);
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+
+.nav-item:hover {
+  background-color: var(--coupolic-palette-200);
+  transition: 0.3s ease-in-out;
+}
+
+.nav-active {
+  background-color: var(--coupolic-palette-200);
+}
+
+.app-title {
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  align-self: flex-start;
+  color: var(--coupolic-palette-900);
+}
+
+.coupolic-settings-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+
+.inner-box {
+  height: 100%;
+  display: flex;
+  gap: 20px;
+}
+
+.inner-section-80 {
+  background-color: var(--coupolic-palette-50);
+  border: 1px solid var(--coupolic-palette-100);
+  color: var(--coupolic-palette-900);
+  padding: 24px;
+  width: 80%;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.inner-section-20 {
+  background-color: var(--coupolic-palette-50);
+  border: 1px solid var(--coupolic-palette-100);
+  color: var(--coupolic-palette-900);
+  padding: 24px;
+  width: 20%;
+  font-size: 14px;
+  border-radius: 12px;
+  font-weight: 400;
 }

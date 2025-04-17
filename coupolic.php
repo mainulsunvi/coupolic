@@ -85,7 +85,12 @@ function coupolic_admin_page() {
 }
 
 function coupolic_admin_scripts() {
-    wp_enqueue_script( 'coupolic-admin-ui', 'http://localhost:5173/src/main.js', array(), time(), false );
+    // wp_enqueue_script( 'coupolic-admin-ui', 'http://localhost:5173/src/main.js', array(), time(), false );
+
+    wp_enqueue_script( 'coupolic-admin-ui', COUPOLIC_URL . '/assets/build/assets/coupolic-admin-app-script.js', array(), time(), false );
+
+    wp_enqueue_style( 'coupolic-admin-ui-style', COUPOLIC_URL . '/assets/build/assets/coupolic-admin-app.css', array(), time() );
+    wp_enqueue_style( 'coupolic-admin-style', COUPOLIC_URL . '/assets/admin/css/style.css', array(), time() );
 }
 add_action( 'admin_enqueue_scripts', 'coupolic_admin_scripts' );
 
