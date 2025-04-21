@@ -1,32 +1,50 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import GeneralPage from '@/pages/GeneralPage.vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
+
+import GeneralPage from '@/pages/GeneralOptions.vue'
+import CouponOptions from '@/pages/CouponOptions.vue'
+import GeneratorOptions from '@/pages/GeneratorOptions.vue'
+import GeneratingCoupons from '@/pages/GeneratingCoupons.vue'
+import ExportOptions from '@/pages/ExportOptions.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
       name: 'home',
-      redirect: GeneralPage,
+      redirect: { path: '/general-options' },
       component: GeneralPage,
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/general-options',
+      name: 'general-options',
+      component: GeneralPage,
+      children: [
+        {
+          path: 'general',
+        }
+      ]
     },
-    // {
-    //   path: '/general-options',
-    //   name: 'general-options',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: GeneralPage,
-    // },
+    {
+      path: '/coupon-options',
+      name: 'coupon-options',
+      component: CouponOptions,
+    },    
+    {
+      path: '/generator-options',
+      name: 'generator-options',
+      component: GeneratorOptions,
+    },    
+    {
+      path: '/generating-coupons',
+      name: 'generating-coupons',
+      component: GeneratingCoupons,
+    },
+    {
+      path: '/export-options',
+      name: 'export-options',
+      component: ExportOptions,
+    },
   ],
 })
 

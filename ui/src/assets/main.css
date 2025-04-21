@@ -48,6 +48,11 @@
   color: var(--coupolic-palette-900);
   font-weight: 600;
   font-size: 14px;
+  user-select: none;
+}
+
+.nav-item a:focus {
+  box-shadow: none;
 }
 
 
@@ -103,4 +108,12 @@
   font-size: 14px;
   border-radius: 12px;
   font-weight: 400;
+}
+
+.coupolic-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 52px;
 }

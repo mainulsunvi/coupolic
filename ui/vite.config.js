@@ -27,7 +27,7 @@ export default defineConfig({
       output: {
         inlineDynamicImports: true,
         entryFileNames: 'assets/coupolic-admin-app-script.js',
-        assetFileNames: `assets/coupolic-admin-app.[ext]`
+        assetFileNames: `assets/coupolic-admin-app.[ext]`,
       }
     },
   }
