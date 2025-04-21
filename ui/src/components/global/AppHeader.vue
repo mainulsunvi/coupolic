@@ -8,7 +8,7 @@ import NavMenu from "@/components/settings/NavMenu.vue";
     <header class="coupolic-settings-header">
         <div class="coupolic-header-upper-section">
             <span class="app-title">Coupolic</span>
-            <span class="app-version">1.0.0</span>
+            <span class="app-version">v1.0.0</span>
         </div>
         <div>
         <div class="inner-container">

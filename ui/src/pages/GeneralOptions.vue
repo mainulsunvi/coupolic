@@ -1,23 +1,41 @@
-
 <script setup>
+import CardBox from '@/components/global/CardBox.vue';
 import { RouterLink, RouterView } from 'vue-router'
+import Icon from '@/components/global/LucidIcon.vue'
+// import { CircleAlert } from 'lucide-vue-next'
 </script>
 
 <template>
-	    <div class="inner-box">
-      <div class="inner-section-20">
-		<div class="coupolic-general-sub-nav-menus">
-			<div class="sub-nav-menu">
-				<RouterLink to="#">General</RouterLink>
+	<div class="inner-box">
+		<CardBox :width=16 :height=40>
+			<div class="coupolic-general-sub-nav-menus">
+				<div class="sub-nav-menu nav-active">
+					<Icon name="Settings" :size=16 :stroke-width=1.5 />
+					<RouterLink to="#">General</RouterLink>
+				</div>
+				<div class="sub-nav-menu">
+					<Icon name="OctagonAlert" :size=16 :stroke-width=1.5 />
+					<RouterLink to="#">Usage Restriction</RouterLink>
+				</div>
+				<div class="sub-nav-menu">
+					<Icon name="Hourglass" :size=16 :stroke-width=1.5 />
+					<RouterLink to="#">Usage Limit</RouterLink>
+				</div>
 			</div>
-			<div class="sub-nav-menu">
-				<RouterLink to="#">Usage Restriction</RouterLink>
-			</div>
-			<div class="sub-nav-menu">
-				<RouterLink to="#">Usage Limit</RouterLink>
-			</div>
-		</div>
-	  </div>
-      <div class="inner-section-80">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Error repellendus harum voluptatum, placeat distinctio, qui animi officiis odio ut quam nemo, dolorem suscipit nobis. Perferendis expedita ullam autem tempore dolore, fuga cum tenetur corrupti eaque dolor, dolores vel illum porro, nihil vero nostrum quis soluta quaerat laboriosam asperiores amet harum? Provident deserunt harum corrupti ea. Dolore voluptatem ad quis sapiente quaerat perspiciatis modi hic ab recusandae deserunt ipsum, itaque reprehenderit molestiae, fugit magni et natus laudantium dicta praesentium vitae. Rem sequi autem vitae dolorum quod porro, odio perspiciatis veritatis ad enim voluptate, alias voluptatum voluptas mollitia numquam. Asperiores fuga harum atque praesentium dicta excepturi eveniet reprehenderit ex. Inventore, at omnis dolorem corporis quas delectus dolore aliquid possimus quisquam eaque. Numquam!</div>
-    </div>
+		</CardBox>
+		<CardBox :width=80>
+			<!-- <RouterView /> -->
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, iusto? Possimus labore animi eligendi
+			tenetur, aperiam aspernatur. Ullam perspiciatis cum eligendi esse temporibus cumque aut vero saepe,
+			repudiandae officiis, perferendis, consequatur dolores inventore eveniet? Nemo, veniam. Possimus, quas
+			nostrum explicabo veritatis necessitatibus ipsum id minus neque repellat modi reiciendis pariatur sapiente
+			iusto porro libero facilis aperiam, debitis ab quibusdam reprehenderit quam nam! Labore exercitationem
+			commodi alias rerum quidem ex ea vero? Quos ea harum doloremque aspernatur deleniti praesentium, iure
+			repellendus. Exercitationem reiciendis officiis dolores mollitia tempora quod atque at iusto nesciunt,
+			doloremque pariatur rerum repudiandae nostrum! Sit excepturi sequi qui ab cum itaque? At, distinctio
+			repudiandae, provident tempora assumenda sint, soluta maiores voluptates suscipit aspernatur itaque
+			obcaecati placeat! Labore, assumenda!
+		</CardBox>
+	</div>
+
 </template>
