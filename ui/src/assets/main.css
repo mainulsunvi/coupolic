@@ -52,7 +52,7 @@
   user-select: none;
 }
 
-.nav-item a:focus {
+.nav-item a:focus, .coupolic-general-sub-nav-menus .sub-nav-menu a:focus {
   box-shadow: none;
 }
 

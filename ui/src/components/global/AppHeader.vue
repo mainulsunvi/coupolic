@@ -1,6 +1,10 @@
 <script setup>
 import NavMenu from "@/components/settings/NavMenu.vue";
-
+let paths = [
+    '/general-options/general',
+    '/general-options/restriction',
+    '/general-options/limit',
+]
 
 </script>
 
@@ -13,7 +17,7 @@ import NavMenu from "@/components/settings/NavMenu.vue";
         <div>
         <div class="inner-container">
             <ul class="nav-items">
-                <li class="nav-item" exact :class="{ 'nav-active': $route.path === '/general-options' }">
+                <li class="nav-item" :class="{ 'nav-active': paths.includes($route.path) }">
                     <RouterLink to="/general-options" className="hello-world">General Options</RouterLink>
                 </li>
                 <li class="nav-item" exact :class="{ 'nav-active': $route.path === '/coupon-options' }">
