@@ -35,7 +35,7 @@
 }
 
 .nav-item {
-  padding: 6px 16px;
+  padding: 6px 0px;
   /* border: 1px solid; */
   border-radius: 8px;
   font-weight: 600;
@@ -59,7 +59,7 @@
 
 .nav-item:hover {
   background-color: var(--coupolic-palette-200);
-  transition: 0.3s ease-in-out;
+  transition: .3s all ease;
 }
 
 .nav-active {
@@ -71,6 +71,7 @@
   font-weight: 700;
   text-transform: uppercase;
   align-self: flex-start;
+  line-height: 1;
   color: var(--coupolic-palette-900);
 }
 
@@ -118,4 +119,11 @@
   gap: 8px;
   margin-top: 52px;
   color: var(--coupolic-palette-900)
+}
+
+.coupolic-header-upper-section {
+  display: flex;
+  gap: 12px;
+  /* height: 30px; */
+  align-items: last baseline;
 }
