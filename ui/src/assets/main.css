@@ -44,6 +44,7 @@
 }
 
 .nav-item a {
+  padding: 6px 16px;
   text-decoration: none;
   color: var(--coupolic-palette-900);
   font-weight: 600;
@@ -116,4 +117,5 @@
   align-items: center;
   gap: 8px;
   margin-top: 52px;
+  color: var(--coupolic-palette-900)
 }
