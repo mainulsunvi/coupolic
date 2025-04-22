@@ -2,20 +2,8 @@
   background-color: azure;
   padding: 10px 30px;
 } */
- 
-:root {
-  --coupolic-palette-950: #1e1a4d;
-  --coupolic-palette-900: #312c85;
-  --coupolic-palette-800: #372aac;
-  --coupolic-palette-700: #432dd7;
-  --coupolic-palette-600: #4f39f6;
-  --coupolic-palette-500: #615fff;
-  --coupolic-palette-400: #7c86ff;
-  --coupolic-palette-300: #a3b3ff;
-  --coupolic-palette-200: #c6d2ff;
-  --coupolic-palette-100: #e0e7ff;
-  --coupolic-palette-50: #eef2ff;
-}
+
+@import url('base.css');
 
 .coupolic-container {
   width: 1000px;
@@ -116,7 +104,6 @@
 .coupolic-header-upper-section {
   display: flex;
   gap: 12px;
-  /* height: 30px; */
   align-items: last baseline;
 }
 
@@ -144,4 +131,10 @@
   font-weight: 600;
   font-size: 14px;
   border-radius: 8px;
+  width: 85%;
+}
+
+.coupolic-general-sub-nav-menus .sub-nav-menu:hover {
+  background-color: var(--coupolic-palette-100);
+  transition: .3s all ease;
 }

@@ -7,18 +7,18 @@ import Icon from '@/components/global/LucidIcon.vue'
 
 <template>
 	<div class="inner-box">
-		<CardBox :width=16 :height=40>
+		<CardBox :width=20 :height=40>
 			<div class="coupolic-general-sub-nav-menus">
 				<div class="sub-nav-menu" :class="{ 'nav-active': $route.name === 'general-options-general' }">
-					<Icon name="Settings" :size=16 :stroke-width=1.5 />
+					<Icon name="Settings" :size=16 :stroke-width=2 />
 					<RouterLink :to="{ name: 'general-options-general'}">General</RouterLink>
 				</div>
 				<div class="sub-nav-menu" :class="{ 'nav-active': $route.name === 'general-options-restriction' } ">
-					<Icon name="OctagonAlert" :size=16 :stroke-width=1.5 />
+					<Icon name="TriangleAlert" :size=16 :stroke-width=2 />
 					<RouterLink :to="{ name: 'general-options-restriction'}">Usage Restriction</RouterLink>
 				</div>
 				<div class="sub-nav-menu" :class="{ 'nav-active': $route.name === 'general-options-limit' }">
-					<Icon name="Hourglass" :size=16 :stroke-width=1.5 />
+					<Icon name="Hourglass" :size=16 :stroke-width=2 />
 				<RouterLink :to="{ name: 'general-options-limit' }">Usage Limit</RouterLink>
 			</div>
 	</div>

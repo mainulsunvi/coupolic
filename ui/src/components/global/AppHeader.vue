@@ -1,5 +1,5 @@
 <script setup>
-import NavMenu from "@/components/settings/NavMenu.vue";
+import { RouterLink } from 'vue-router'
 let paths = [
     '/general-options/general',
     '/general-options/restriction',
