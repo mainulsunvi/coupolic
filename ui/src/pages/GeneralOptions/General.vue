@@ -20,13 +20,13 @@ document.addEventListener('submit', function (event) {
 </script>
 
 <template>
-	<form action="" method="post" class="general-form">
+	<form action="" method="post" class="general-form" style="margin-bottom: 20px;">
 		<input type="text" name="name" placeholder="Enter your name" />
 		<input type="email" name="email" placeholder="Enter your email" />
 		<select name="discount_type" id="options">
-			<option value="option1">Option 1</option>
-			<option value="option1">Option 2</option>
-			<option value="option1">Option 3</option>
+			<option value="percent">Percentage Discount</option>
+			<option value="fixed_cart">Fixed Cart Discount</option>
+			<option value="fixed_product">Fixed Product Discount</option>
 		</select>
 
 		<input type="submit" value="Submit" />
