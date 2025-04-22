@@ -67,6 +67,19 @@
   color: var(--coupolic-palette-900);
 }
 
+.app-version {
+  font-size: 11px;
+    line-height: 11px;
+    color: #000;
+    font-weight: 700;
+    border: 1px solid var(--coupolic-palette-900);
+    border-radius: 4px;
+    background-color: var(--coupolic-palette-50);
+    display: inline-block;
+    padding: 2px 6px;
+    margin-bottom: 2px;
+}
+
 .coupolic-settings-header {
   display: flex;
   flex-direction: column;
@@ -118,7 +131,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px;
+  padding: 0px 8px;
   margin: 4px 0px;
   border-radius: 4px;
   cursor: pointer;
@@ -131,7 +144,9 @@
   font-weight: 600;
   font-size: 14px;
   border-radius: 8px;
-  width: 85%;
+  width: 86%;
+  padding: 8px 0px;
+  line-height: 1;
 }
 
 .coupolic-general-sub-nav-menus .sub-nav-menu:hover {
