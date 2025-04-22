@@ -153,3 +153,56 @@
   background-color: var(--coupolic-palette-100);
   transition: .3s all ease;
 }
+
+.coupolic-input-container {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  background-color: var(--coupolic-palette-100);
+  border: 1px solid var(--coupolic-palette-200);
+  border-radius: 8px;
+  padding: 20px;
+  /* box-shadow: 0px 2px 12px var(--coupolic-palette-300); */
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.coupolic-input-container .coupolic-input-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--coupolic-palette-900);
+}
+
+.coupolic-input-container .coupolic-input-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--coupolic-palette-800);
+  margin: 4px 0px 12px 0px;
+}
+
+.coupolic-input-container .coupolic-input-field {
+  width: 85%;
+  max-width: 100%;
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--coupolic-palette-200);
+  background-color: var(--coupolic-palette-50);
+  color: var(--coupolic-palette-900);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+input {
+  margin: 0 0px;
+}
+
+.coupolic-input-container .coupolic-input-field::placeholder {
+  color: var(--coupolic-palette-900);
+  font-size: 14px;
+  font-weight: 400;
+}
+.coupolic-input-container .coupolic-input-field:focus {
+  outline: none;
+  box-shadow: 0px 0px 4px var(--coupolic-palette-200);
+}

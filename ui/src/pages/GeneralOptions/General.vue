@@ -1,6 +1,14 @@
 <script setup>
 
-import axios from 'axios';
+import Input from '@/components/fields/Input.vue';
+import Select from '@/components/fields/Select.vue';
+import DateTime from '@/components/fields/DateTime.vue';
+
+let options = {
+	percent: 'Percentage Discount',
+	fixed_cart: 'Fixed Cart Discount',
+	fixed_product: 'Fixed Product Discount'
+}
 
 // async function fetchData() {
 // 	const response = await axios.get('/wp-json/wc/v3/products');
@@ -20,28 +28,14 @@ document.addEventListener('submit', function (event) {
 </script>
 
 <template>
-	<form action="" method="post" class="general-form" style="margin-bottom: 20px;">
-		<input type="text" name="name" placeholder="Enter your name" />
-		<input type="email" name="email" placeholder="Enter your email" />
-		<select name="discount_type" id="options">
-			<option value="percent">Percentage Discount</option>
-			<option value="fixed_cart">Fixed Cart Discount</option>
-			<option value="fixed_product">Fixed Product Discount</option>
-		</select>
 
+	<form action="" method="post" class="general-form" style="margin-bottom: 20px;">
+		<Select :options=options name="discount_type" id="discount_type" label="Discount Type"
+			subtitle="The Discount Type of the Coupon ( i.e.: Percentage Discount )" />
+		<Input type="tel" name="coupon_amount" id="coupon_amount" label="Coupon Amount"
+			subtitle="The Value of the Coupon that will be Deducted from main Price" :value=0 />
+		<DateTime name="expiry_date" label="Coupon Expiry Date"
+			subtitle="The Coupon will Expire at 00:00:00 of this Date" />
 		<input type="submit" value="Submit" />
 	</form>
-
-	<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat temporibus explicabo non saepe cumque aliquam
-		ipsa labore libero tenetur quaerat, nesciunt ab voluptatum, enim nihil qui rerum iure similique minima sint
-		ipsam aspernatur! Recusandae, sunt? Ab quia, odit soluta suscipit fugit quisquam perspiciatis assumenda error,
-		vitae similique rem! Dolorem a sed impedit.
-	</p>
-	<p>
-		Hic rem quis earum dolores a dolore odio explicabo enim
-		reprehenderit consequatur. Vitae at dolore cupiditate nihil vero perferendis illum fuga quasi, tempore ab, iusto
-		optio quidem autem dolores minima? Non debitis tempore eius aspernatur iure voluptate minus libero atque illo.
-		Consequuntur, optio aut. Totam veritatis et inventore dolore aliquam ipsam voluptas expedita, porro aliquid
-		ratione suscipit, nisi assumenda sit voluptate. Magnam enim, nam fuga perspiciatis impedit natus!
-	</p>
 </template>
