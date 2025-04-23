@@ -28,13 +28,13 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
 }
 
 .nav-item a {
   padding: 6px 16px;
   text-decoration: none;
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
   font-weight: 600;
   font-size: 14px;
   user-select: none;
@@ -72,7 +72,7 @@
     line-height: 11px;
     color: #000;
     font-weight: 700;
-    border: 1px solid var(--coupolic-palette-900);
+    border: 1px solid var(--coupolic-palette-950);
     border-radius: 4px;
     background-color: var(--coupolic-palette-50);
     display: inline-block;
@@ -96,9 +96,7 @@
 }
 
 .inner-section {
-  background-color: var(--coupolic-palette-50);
-  border: 1px solid var(--coupolic-palette-100);
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
   padding: 24px;
   border-radius: 12px;
   font-size: 14px;
@@ -111,7 +109,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 52px;
-  color: var(--coupolic-palette-900)
+  color: var(--coupolic-palette-950)
 }
 
 .coupolic-header-upper-section {
@@ -140,7 +138,7 @@
 .coupolic-general-sub-nav-menus .sub-nav-menu a {
   user-select: none;
   text-decoration: none;
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
   font-weight: 600;
   font-size: 14px;
   border-radius: 8px;
@@ -171,13 +169,13 @@
 .coupolic-input-container .coupolic-input-label {
   font-size: 16px;
   font-weight: 600;
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
 }
 
 .coupolic-input-container .coupolic-input-subtitle {
   font-size: 14px;
   font-weight: 400;
-  color: var(--coupolic-palette-800);
+  color: #646970;
   margin: 4px 0px 12px 0px;
 }
 
@@ -188,7 +186,7 @@
   border-radius: 8px;
   border: 1px solid var(--coupolic-palette-200);
   background-color: var(--coupolic-palette-50);
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
   font-size: 14px;
   font-weight: 400;
 }
@@ -198,7 +196,7 @@ input {
 }
 
 .coupolic-input-container .coupolic-input-field::placeholder {
-  color: var(--coupolic-palette-900);
+  color: var(--coupolic-palette-950);
   font-size: 14px;
   font-weight: 400;
 }
