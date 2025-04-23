@@ -3,6 +3,8 @@
 import Input from '@/components/fields/Input.vue';
 import Select from '@/components/fields/Select.vue';
 import DateTime from '@/components/fields/DateTime.vue';
+import TextField from '@/components/fields/TextField.vue';
+// import DateTime from '@/components/fields/TextArea.vue';
 
 let options = {
 	percent: 'Percentage Discount',
@@ -36,6 +38,7 @@ document.addEventListener('submit', function (event) {
 			subtitle="The Value of the Coupon that will be Deducted from main Price" :value=0 />
 		<DateTime name="expiry_date" label="Coupon Expiry Date"
 			subtitle="The Coupon will Expire at 00:00:00 of this Date" />
+		<TextField :height=150 placeholder="Enter description ..." label="Description (Optional)" subtitle="This Description will show across all of your generated coupon" name="excerpt"/>
 		<input type="submit" value="Submit" />
 	</form>
 </template>

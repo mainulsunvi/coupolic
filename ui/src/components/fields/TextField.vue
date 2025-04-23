@@ -2,10 +2,6 @@
 import CardBox from '../global/CardBox.vue';
 
 defineProps({
-	type: {
-		type: String,
-		required: true,
-	},
 	placeholder: {
 		type: String,
 		default: 'Enter the Text'
@@ -37,6 +33,10 @@ defineProps({
 	subtitle: {
 		type: String,
 		default: ''
+	},
+	height: {
+		type: Number,
+		default: 100
 	}
 
 })
@@ -46,8 +46,8 @@ defineProps({
 	<div class="coupolic-input-container">
 		<label v-if="label" :for="name" class="coupolic-input-label">{{ label }}</label>
 		<CardBox :width=75>
-			<input :type="type" :placeholder="placeholder" :name="name" :id="id" :disabled="disabled"
-				:readonly="readonly" :value=value class="coupolic-input-field" />
+			<textarea :placeholder="placeholder" :name="name" :id="id" :disabled="disabled"
+				:readonly="readonly" :value=value class="coupolic-input-field" :style="{ height: height + 'px' }" />
 			<p v-if="subtitle" class="coupolic-input-subtitle">{{ subtitle }}</p>
 		</CardBox>
 	</div>

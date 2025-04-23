@@ -7,7 +7,7 @@ import { Icon } from "@iconify/vue";
 
 <template>
 	<div class="inner-box">
-		<CardBox :width=20 :height=40>
+		<CardBox :width=16 :height=70>
 			<div class="coupolic-general-sub-nav-menus">
 				<div class="sub-nav-menu" :class="{ 'nav-active': $route.name === 'general-options-general' }">
 					<Icon icon="proicons:settings" width="18" height="18" />
@@ -23,7 +23,7 @@ import { Icon } from "@iconify/vue";
 				</div>
 			</div>
 		</CardBox>
-		<CardBox :width=80>
+		<CardBox :width=80 :padding=0 :background=false :border=false>
 			<RouterView />
 		</CardBox>
 	</div>
