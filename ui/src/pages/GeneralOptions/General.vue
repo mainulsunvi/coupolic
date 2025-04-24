@@ -4,6 +4,8 @@ import Input from '@/components/fields/Input.vue';
 import Select from '@/components/fields/Select.vue';
 import DateTime from '@/components/fields/DateTime.vue';
 import TextField from '@/components/fields/TextField.vue';
+import CardBox from '@/components/global/CardBox.vue';
+import CheckBox from '@/components/fields/CheckBox.vue';
 // import DateTime from '@/components/fields/TextArea.vue';
 
 let options = {
@@ -38,7 +40,11 @@ document.addEventListener('submit', function (event) {
 			subtitle="The Value of the Coupon that will be Deducted from main Price" :value=0 />
 		<DateTime name="expiry_date" label="Coupon Expiry Date"
 			subtitle="The Coupon will Expire at 00:00:00 of this Date" />
-		<TextField :height=150 placeholder="Enter description ..." label="Description (Optional)" subtitle="This Description will show across all of your generated coupon" name="excerpt"/>
-		<input type="submit" value="Submit" />
+		<CheckBox name="free_shipping" label="Allow free shipping"
+			subtitle="Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone and be set to require a valid free shipping coupon  (see the Free Shipping Requires setting)." />
+		<TextField :height=150 placeholder="Enter description ..." label="Description (Optional)"
+			subtitle="This Description will show across all of your generated coupon" name="excerpt" />
+
+		<Input type="submit" value="submit" label="" />
 	</form>
 </template>

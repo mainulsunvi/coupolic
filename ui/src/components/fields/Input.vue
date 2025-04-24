@@ -37,8 +37,7 @@ defineProps({
 	subtitle: {
 		type: String,
 		default: ''
-	}
-
+	},
 })
 
 </script>
@@ -47,7 +46,7 @@ defineProps({
 		<label v-if="label" :for="name" class="coupolic-input-label">{{ label }}</label>
 		<CardBox :width=75>
 			<input :type="type" :placeholder="placeholder" :name="name" :id="id" :disabled="disabled"
-				:readonly="readonly" :value=value class="coupolic-input-field" />
+				:readonly="readonly" :value=value class="coupolic-input-field"/>
 			<p v-if="subtitle" class="coupolic-input-subtitle">{{ subtitle }}</p>
 		</CardBox>
 	</div>

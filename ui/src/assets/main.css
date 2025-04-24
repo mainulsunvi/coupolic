@@ -8,17 +8,17 @@
 .coupolic-container {
   width: 1020px;
   margin: 48px auto;
-  
   padding: 48px;
   border-radius: 20px;
   border: 1px solid var(--coupolic-palette-200);
+  font-family: "inter";
 }
 
 .nav-items {
   display: flex;
   gap: 20px;
   justify-content: flex-start;
-  
+
 }
 
 .nav-item {
@@ -38,7 +38,8 @@
   user-select: none;
 }
 
-.nav-item a:focus, .coupolic-general-sub-nav-menus .sub-nav-menu a:focus {
+.nav-item a:focus,
+.coupolic-general-sub-nav-menus .sub-nav-menu a:focus {
   box-shadow: none;
 }
 
@@ -67,15 +68,15 @@
 
 .app-version {
   font-size: 11px;
-    line-height: 11px;
-    color: #000;
-    font-weight: 700;
-    border: 1px solid var(--coupolic-palette-950);
-    border-radius: 4px;
-    background-color: var(--coupolic-palette-50);
-    display: inline-block;
-    padding: 2px 6px;
-    margin-bottom: 2px;
+  line-height: 11px;
+  color: #000;
+  font-weight: 700;
+  border: 1px solid var(--coupolic-palette-950);
+  border-radius: 4px;
+  background-color: var(--coupolic-palette-50);
+  display: inline-block;
+  padding: 2px 6px;
+  margin-bottom: 2px;
 }
 
 .coupolic-settings-header {
@@ -171,6 +172,7 @@
   font-weight: 400;
   color: #646970;
   margin: 8px 0px 12px 0px;
+  line-height: 1.5;
 }
 
 .coupolic-input-container .coupolic-input-field {
@@ -185,15 +187,27 @@
   font-weight: 400;
 }
 
-input, select {
+.coupolic-input-container .coupolic-input-checkbox {
+  border: 1px solid var(--coupolic-palette-200);
+}
+
+.coupolic-input-container .coupolic-input-checkbox:focus {
+  outline: none;
+  border-color: 1px solid var(--coupolic-palette-100);
+  box-shadow: 0px 0px 4px var(--coupolic-palette-200);
+}
+
+input,
+select {
   margin: 0 0px;
 }
 
 .coupolic-input-container .coupolic-input-field::placeholder {
-  color: var(--coupolic-palette-950);
+  color: #646970;
   font-size: 14px;
   font-weight: 400;
 }
+
 .coupolic-input-container .coupolic-input-field:focus {
   outline: none;
   box-shadow: 0px 0px 4px var(--coupolic-palette-200);
