@@ -112,26 +112,42 @@ class Coupolic_Admin {
             true
         );
 
-        // wp_enqueue_script( 'coupolic-admin-ui', 
-        //     'http://localhost:5173/src/main.js', 
-        //     array(), 
-        //     time(), 
-        //     false 
-        // );
+        if( sanitize_text_field( $_GET["action"]) === "new_ui" ) {
+            // wp_enqueue_script( 'coupolic-admin-ui',
+            //     'http://localhost:5173/src/main.js',
+            //     array(),
+            //     time(),
+            //     false
+            // );
 
-        wp_enqueue_script( 'coupolic-admin-ui', 
-            COUPOLIC_URL . '/assets/build/coupolic-ui-scripts.js', 
-            array(), 
-            time(), 
-            false 
-        );
-        wp_enqueue_style( 'coupolic-admin-ui-style', 
-            COUPOLIC_URL . '/assets/build/coupolic-ui-styles.css', 
-            array(), 
-            time() 
-        );
+            wp_enqueue_script( 'coupolic-admin-ui',
+                COUPOLIC_URL . '/assets/build/coupolic-ui-scripts.js',
+                array(),
+                time(),
+                false
+            );
+            wp_enqueue_style( 'coupolic-admin-ui-style',
+                COUPOLIC_URL . '/assets/build/coupolic-ui-styles.css',
+                array(),
+                time()
+            );
 
-        wp_localize_script( 'coupolic-admin-ui', 'coupolic', array(
+            wp_localize_script( 'coupolic-admin-ui', 'coupolic', array(
+            'ajax_url' => admin_url( 'admin-ajax.php' ),
+            'rest_url'   => esc_url( rest_url() ),
+            'products'   => json_encode( $products ),
+            'categories' => json_encode( $categories ),
+            'brands'     => json_encode( $product_brands ),
+            'nonce'    => wp_create_nonce( 'coupolic_nonce' ),
+            'messages' => array(
+                'generating' => esc_html__( 'Generating coupons...', 'coupolic' ),
+                'success'    => esc_html__( 'Coupons generated successfully!', 'coupolic' ),
+                'error'      => esc_html__( 'An error occurred. Please try again.', 'coupolic' ),
+            ),
+        ) );
+        }
+
+        wp_localize_script( 'coupolic-admin', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'rest_url'   => esc_url( rest_url() ),
             'products'   => json_encode( $products ),
