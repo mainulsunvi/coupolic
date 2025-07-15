@@ -112,7 +112,7 @@ class Coupolic_Admin {
             true
         );
 
-        if( sanitize_text_field( $_GET["action"]) === "new_ui" ) {
+        if( !empty($_GET["action"]) &&  sanitize_text_field( $_GET["action"]) === "new_ui" ) {
             // wp_enqueue_script( 'coupolic-admin-ui',
             //     'http://localhost:5173/src/main.js',
             //     array(),
@@ -175,7 +175,7 @@ class Coupolic_Admin {
      * Render admin page
      */
     public function render_admin_page() {
-        if( sanitize_text_field( $_GET["action"]) === "new_ui" ) {
+        if( !empty($_GET["action"]) && sanitize_text_field( $_GET["action"]) === "new_ui" ) {
             ?>
             <div id="coupolic-app" class="wrap"></div>
             <?php
