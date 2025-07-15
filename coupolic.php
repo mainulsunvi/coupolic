@@ -28,9 +28,9 @@
 
     // Define plugin constants
     define( 'COUPOLIC_VERSION', '1.0.0' );
-    define( 'COUPOLIC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-    define( 'COUPOLIC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+    define( 'COUPOLIC_DIR', plugin_dir_path( __FILE__ ) );
     define( 'COUPOLIC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+    define( 'COUPOLIC_URL', plugin_dir_url( __FILE__ ) );
 
     /**
      * Check if WooCommerce is active
@@ -74,8 +74,8 @@
             }
 
             // Include required files
-            require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-admin.php';
-            require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-generator.php';
+            require_once COUPOLIC_DIR . 'includes/class-coupolic-admin.php';
+            require_once COUPOLIC_DIR . 'includes/class-coupolic-generator.php';
 
             // Initialize admin class
             if ( is_admin() ) {

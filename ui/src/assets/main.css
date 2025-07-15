@@ -1,0 +1,214 @@
+/* .inner-container {
+  background-color: azure;
+  padding: 10px 30px;
+} */
+
+@import url('base.css');
+
+.coupolic-container {
+  width: 1020px;
+  margin: 48px auto;
+  padding: 48px;
+  border-radius: 20px;
+  border: 1px solid var(--coupolic-palette-200);
+  font-family: "inter";
+}
+
+.nav-items {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+
+}
+
+.nav-item {
+  padding: 6px 0px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--coupolic-palette-950);
+}
+
+.nav-item a {
+  padding: 6px 16px;
+  text-decoration: none;
+  color: var(--coupolic-palette-950);
+  font-weight: 600;
+  font-size: 14px;
+  user-select: none;
+}
+
+.nav-item a:focus,
+.coupolic-general-sub-nav-menus .sub-nav-menu a:focus {
+  box-shadow: none;
+}
+
+
+.nav-item:hover {
+  background-color: var(--coupolic-palette-200);
+  transition: .3s all ease;
+}
+
+.nav-active {
+  background-color: var(--coupolic-palette-200);
+}
+
+.sub-nav-menu.nav-active {
+  background-color: var(--coupolic-palette-100);
+}
+
+.app-title {
+  font-size: 32px;
+  font-weight: 700;
+  text-transform: uppercase;
+  align-self: flex-start;
+  line-height: 1;
+  color: var(--coupolic-palette-900);
+}
+
+.app-version {
+  font-size: 11px;
+  line-height: 11px;
+  color: #000;
+  font-weight: 700;
+  border: 1px solid var(--coupolic-palette-950);
+  border-radius: 4px;
+  background-color: var(--coupolic-palette-50);
+  display: inline-block;
+  padding: 2px 6px;
+  margin-bottom: 2px;
+}
+
+.coupolic-settings-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+
+.inner-box {
+  height: 100%;
+  display: flex;
+  gap: 20px;
+}
+
+.inner-section {
+  color: var(--coupolic-palette-950);
+  padding: 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.coupolic-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 52px;
+  color: var(--coupolic-palette-950)
+}
+
+.coupolic-header-upper-section {
+  display: flex;
+  gap: 12px;
+  align-items: last baseline;
+}
+
+.coupolic-general-sub-nav-menus {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+
+.coupolic-general-sub-nav-menus .sub-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0px 8px;
+  margin: 4px 0px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.coupolic-general-sub-nav-menus .sub-nav-menu a {
+  user-select: none;
+  text-decoration: none;
+  color: var(--coupolic-palette-950);
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 8px;
+  width: 86%;
+  padding: 8px 0px;
+  line-height: 1;
+}
+
+.coupolic-general-sub-nav-menus .sub-nav-menu:hover {
+  background-color: var(--coupolic-palette-100);
+  transition: .3s all ease;
+}
+
+.coupolic-input-container {
+  display: flex;
+  align-items: flex-start;
+  border-radius: 8px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  margin-left: 16px;
+}
+
+.coupolic-input-container .coupolic-input-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--coupolic-palette-950);
+  width: 30%;
+  margin-top: 24px;
+}
+
+.coupolic-input-container .coupolic-input-subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  color: #646970;
+  margin: 8px 0px 12px 0px;
+  line-height: 1.5;
+}
+
+.coupolic-input-container .coupolic-input-field {
+  width: 96%;
+  max-width: 100%;
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--coupolic-palette-200);
+  background-color: var(--coupolic-palette-100);
+  color: var(--coupolic-palette-950);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.coupolic-input-container .coupolic-input-checkbox {
+  border: 1px solid var(--coupolic-palette-200);
+}
+
+.coupolic-input-container .coupolic-input-checkbox:focus {
+  outline: none;
+  border-color: 1px solid var(--coupolic-palette-100);
+  box-shadow: 0px 0px 4px var(--coupolic-palette-200);
+}
+
+input,
+select {
+  margin: 0 0px;
+}
+
+.coupolic-input-container .coupolic-input-field::placeholder {
+  color: #646970;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.coupolic-input-container .coupolic-input-field:focus {
+  outline: none;
+  box-shadow: 0px 0px 4px var(--coupolic-palette-200);
+}

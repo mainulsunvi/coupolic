@@ -23,6 +23,7 @@ class Coupolic_Admin {
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_action( 'wp_ajax_coupolic_generate_coupons', array( $this, 'ajax_generate_coupons' ) );
+        add_filter( 'script_loader_tag', array( $this, 'coupolic_loadScriptAsModule' ), 10, 3 );
     }
 
     /**
@@ -56,24 +57,87 @@ class Coupolic_Admin {
             return;
         }
 
+
+        $products = get_posts( array(
+            'post_type'      => 'product',
+            'posts_per_page' => -1,
+        ) );
+
+        $categories = get_terms( array(
+            'taxonomy'   => 'product_cat',
+            'hide_empty' => false,
+        ) );
+        
+        $product_brands = get_terms( array(
+            'taxonomy'   => 'product_brand',
+            'hide_empty' => false,
+        ) );
+
+        $product_brands = array_map( function ( $product_brand ) {
+            return array(
+                'id'    => $product_brand->term_id,
+                'title' => $product_brand->name,
+            );
+        }, $product_brands );
+
+        $categories = array_map( function ( $category ) {
+            return array(
+                'id'    => $category->term_id,
+                'title' => $category->name,
+            );
+        }, $categories );
+
+        $products = array_map( function ( $product ) {
+
+            return array(
+                'id'    => $product->ID,
+                'title' => $product->post_title,
+                'link'  => get_permalink( $product->ID ),
+                'price' => strip_tags(wc_price(get_post_meta( $product->ID, '_price', true )))
+            );
+        }, $products );
+
         wp_enqueue_style(
             'coupolic-admin',
-            COUPOLIC_PLUGIN_URL . 'assets/css/admin.css',
+            COUPOLIC_URL . 'assets/css/admin.css',
             array(),
             COUPOLIC_VERSION
         );
 
         wp_enqueue_script(
             'coupolic-admin',
-            COUPOLIC_PLUGIN_URL . 'assets/js/admin.js',
+            COUPOLIC_URL . 'assets/js/admin.js',
             array( 'jquery' ),
             COUPOLIC_VERSION,
             true
         );
 
-        wp_localize_script( 'coupolic-admin', 'coupolic_ajax', array(
+        // wp_enqueue_script( 'coupolic-admin-ui', 
+        //     'http://localhost:5173/src/main.js', 
+        //     array(), 
+        //     time(), 
+        //     false 
+        // );
+
+        wp_enqueue_script( 'coupolic-admin-ui', 
+            COUPOLIC_URL . '/assets/build/coupolic-ui-scripts.js', 
+            array(), 
+            time(), 
+            false 
+        );
+        wp_enqueue_style( 'coupolic-admin-ui-style', 
+            COUPOLIC_URL . '/assets/build/coupolic-ui-styles.css', 
+            array(), 
+            time() 
+        );
+
+        wp_localize_script( 'coupolic-admin-ui', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'nonce'    => wp_create_nonce( 'coupolic_generate_nonce' ),
+            'rest_url'   => esc_url( rest_url() ),
+            'products'   => json_encode( $products ),
+            'categories' => json_encode( $categories ),
+            'brands'     => json_encode( $product_brands ),
+            'nonce'    => wp_create_nonce( 'coupolic_nonce' ),
             'messages' => array(
                 'generating' => esc_html__( 'Generating coupons...', 'coupolic' ),
                 'success'    => esc_html__( 'Coupons generated successfully!', 'coupolic' ),
@@ -82,10 +146,25 @@ class Coupolic_Admin {
         ) );
     }
 
+    function coupolic_loadScriptAsModule( $tag, $handle, $src ) {
+        if ( 'coupolic-admin-ui' !== $handle ) {
+            return $tag;
+        }
+        $tag = '<script id="coupolic-admin-ui" type="module" src="' . esc_url( $src ) . '"></script>';
+        return $tag;
+    }
+
+
     /**
      * Render admin page
      */
     public function render_admin_page() {
+        if( sanitize_text_field( $_GET["action"]) === "new_ui" ) {
+            ?>
+            <div id="coupolic-app" class="wrap"></div>
+            <?php
+            return;
+        }
         ?>
         <div class="wrap coupolic-wrap">
             <h1><?php esc_html_e( 'Coupolic: Bulk Coupon Generator', 'coupolic' ); ?></h1>
@@ -230,7 +309,7 @@ class Coupolic_Admin {
      */
     public function ajax_generate_coupons() {
         // Verify nonce
-        if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( sanitize_text_field( $_POST['nonce'] ) ), 'coupolic_generate_nonce' ) ) {
+        if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( sanitize_text_field( $_POST['nonce'] ) ), 'coupolic_nonce' ) ) {
             wp_send_json_error( esc_html__( 'Security check failed', 'coupolic' ) );
         }
 

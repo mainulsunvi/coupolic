@@ -1,0 +1,51 @@
+<script setup>
+
+import Input from '@/components/fields/Input.vue';
+import Select from '@/components/fields/Select.vue';
+import DateTime from '@/components/fields/DateTime.vue';
+import TextField from '@/components/fields/TextField.vue';
+import CardBox from '@/components/global/CardBox.vue';
+import CheckBox from '@/components/fields/CheckBox.vue';
+import Select2 from '@/components/fields/Select2.vue'; // Ensure correct import
+
+import { ref } from 'vue';
+
+// Check if coupolic is defined before accessing it
+if (typeof coupolic !== 'undefined' && coupolic.products) {
+	console.log(JSON.parse(coupolic.products));
+} else {
+	console.warn('coupolic is not defined or products are missing.');
+}
+
+let options = {
+	percent: 'Percentage Discount',
+	fixed_cart: 'Fixed Cart Discount',
+	fixed_product: 'Fixed Product Discount'
+}
+
+document.addEventListener('submit', function (event) {
+	event.preventDefault(); // Prevent the default form submission
+	const formData = new FormData(event.target); // Get the form data
+	const data = Object.fromEntries(formData.entries());
+
+	console.log(data)
+})
+
+</script>
+
+<template>
+	<form action="" method="post" class="general-form" style="margin-bottom: 20px;">
+		<Select :options=options name="discount_type" id="discount_type" label="Discount Type"
+			subtitle="The Discount Type of the Coupon ( i.e.: Percentage Discount )" />
+		<Input type="tel" name="coupon_amount" id="coupon_amount" label="Coupon Amount"
+			subtitle="The Value of the Coupon that will be Deducted from main Price" :value=0 />
+		<DateTime name="expiry_date" label="Coupon Expiry Date"
+			subtitle="The Coupon will Expire at 00:00:00 of this Date" />
+		<CheckBox name="free_shipping" label="Allow free shipping"
+			subtitle="Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone and be set to require a valid free shipping coupon  (see the Free Shipping Requires setting)." />
+		<TextField :height=150 placeholder="Enter description ..." label="Description (Optional)"
+			subtitle="This Description will show across all of your generated coupon" name="excerpt" />
+
+		<Input type="submit" value="submit" label="" />
+	</form>
+</template>

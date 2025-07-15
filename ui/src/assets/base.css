@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'); 
+
+:root {
+  --coupolic-palette-950: #1e1a4d;
+  --coupolic-palette-900: #312c85;
+  --coupolic-palette-800: #372aac;
+  --coupolic-palette-700: #432dd7;
+  --coupolic-palette-600: #4f39f6;
+  --coupolic-palette-500: #615fff;
+  --coupolic-palette-400: #7c86ff;
+  --coupolic-palette-300: #a3b3ff;
+  --coupolic-palette-200: #c6d2ff;
+  --coupolic-palette-100: #e0e7ff;
+  --coupolic-palette-50: #eef2ff;
+}

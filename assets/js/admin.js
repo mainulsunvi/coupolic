@@ -24,11 +24,11 @@
 		function generateCoupons() {
 			var formData = $form.serialize();
 			formData += '&action=coupolic_generate_coupons';
-			formData += '&nonce=' + coupolic_ajax.nonce;
+			formData += '&nonce=' + coupolic.nonce;
 
 			// Disable button and show loading
 			$generateBtn.prop('disabled', true).html(
-				coupolic_ajax.messages.generating + ' <span class="coupolic-spinner"></span>'
+				coupolic.messages.generating + ' <span class="coupolic-spinner"></span>'
 			);
 
 			// Hide previous messages
@@ -36,20 +36,20 @@
 			$results.hide();
 
 			$.ajax({
-				url: coupolic_ajax.ajax_url,
+				url: coupolic.ajax_url,
 				type: 'POST',
 				data: formData,
 				success: function (response) {
 					if (response.success) {
-						showMessage(coupolic_ajax.messages.success, 'success');
+						showMessage(coupolic.messages.success, 'success');
 						displayResults(response.data);
 						generatedCoupons = response.data.coupons;
 					} else {
-						showMessage(response.data || coupolic_ajax.messages.error, 'error');
+						showMessage(response.data || coupolic.messages.error, 'error');
 					}
 				},
 				error: function () {
-					showMessage(coupolic_ajax.messages.error, 'error');
+					showMessage(coupolic.messages.error, 'error');
 				},
 				complete: function () {
 					$generateBtn.prop('disabled', false).html('Generate Coupons');
