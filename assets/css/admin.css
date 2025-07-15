@@ -1,0 +1,144 @@
+/**
+ * Coupolic Admin Styles
+ * Version: 1.0.0
+ */
+
+.coupolic-wrap {
+    max-width: 800px;
+    margin: 20px 0;
+}
+
+.coupolic-form-wrapper {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.coupolic-wrap .form-table {
+    margin-top: 0;
+}
+
+.coupolic-wrap .form-table th {
+    width: 200px;
+    font-weight: 600;
+}
+
+#coupolic-message {
+    margin: 20px 0;
+    padding: 12px;
+    border-left: 4px solid;
+    background: #fff;
+}
+
+#coupolic-message.notice-success {
+    border-left-color: #46b450;
+    background-color: #f0f8f0;
+}
+
+#coupolic-message.notice-error {
+    border-left-color: #dc3232;
+    background-color: #fef7f7;
+}
+
+#coupolic-message.notice-info {
+    border-left-color: #00a0d2;
+    background-color: #f0f8ff;
+}
+
+#coupolic-results {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e1e1e1;
+}
+
+#coupolic-results h2 {
+    margin-top: 0;
+    color: #23282d;
+}
+
+#coupolic-coupon-list {
+    background: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.coupolic-coupon-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.coupolic-coupon-item:hover {
+    border-color: #0073aa;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.coupolic-coupon-code {
+    font-family: monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0073aa;
+}
+
+.coupolic-coupon-actions a {
+    text-decoration: none;
+    color: #555;
+    font-size: 12px;
+}
+
+.coupolic-coupon-actions a:hover {
+    color: #0073aa;
+}
+
+.button#generate-coupons:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Loading spinner */
+.coupolic-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: coupolic-spin 1s linear infinite;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+@keyframes coupolic-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .coupolic-wrap .form-table th {
+        width: auto;
+        padding-bottom: 0;
+    }
+    
+    .coupolic-coupon-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .coupolic-coupon-actions {
+        margin-top: 5px;
+    }
+}

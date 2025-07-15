@@ -1,0 +1,174 @@
+# Copyright (C) 2025 Mainul Sunvi
+# This file is distributed under the GPL v3 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Coupolic 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/coupolic\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-07-15T13:21:55+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: coupolic\n"
+
+#. Plugin Name of the plugin
+#: coupolic.php
+#: includes/class-coupolic-admin.php:33
+#: includes/class-coupolic-admin.php:34
+msgid "Coupolic"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: coupolic.php
+msgid "https://msunvi.com"
+msgstr ""
+
+#. Description of the plugin
+#: coupolic.php
+msgid "Coupon Management Plugin for WordPress"
+msgstr ""
+
+#. Author of the plugin
+#: coupolic.php
+msgid "Mainul Sunvi"
+msgstr ""
+
+#. Author URI of the plugin
+#: coupolic.php
+msgid "https://profiles.wordpress.org/mainulsunvi/"
+msgstr ""
+
+#: coupolic.php:52
+msgid "Coupolic requires WooCommerce to be installed and active."
+msgstr ""
+
+#: coupolic.php:91
+msgid "Coupolic requires PHP version 7.4 or higher."
+msgstr ""
+
+#: includes/class-coupolic-admin.php:78
+msgid "Generating coupons..."
+msgstr ""
+
+#: includes/class-coupolic-admin.php:79
+msgid "Coupons generated successfully!"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:80
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: includes/class-coupolic-admin.php:91
+msgid "Bulk Coupon Generator"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:98
+msgid "Coupon Prefix"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:102
+msgid "Prefix for generated coupon codes (e.g., DISCOUNT_XXXXX)"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:108
+msgid "Number of Characters"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:112
+msgid "Number of characters in each coupon code (Default: 5)"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:118
+msgid "Number of Coupons"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:122
+msgid "Number of coupons to generate (max 100)"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:128
+msgid "Discount Type"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:132
+msgid "Fixed cart discount"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:133
+msgid "Percentage discount"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:134
+msgid "Fixed product discount"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:141
+msgid "Coupon Amount"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:145
+msgid "The amount or percentage of the discount"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:151
+msgid "Usage Limit per Coupon"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:155
+msgid "How many times each coupon can be used (0 = unlimited)"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:161
+msgid "Expiry Date"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:165
+msgid "Leave empty for no expiry"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:171
+msgid "Minimum Spend"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:175
+msgid "Minimum spend required to use the coupon"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:181
+msgid "Individual Use"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:186
+msgid "Check this box if the coupon cannot be used in conjunction with other coupons"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:193
+msgid "Coupon Description"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:197
+msgid "Enter a description for the coupon"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:207
+msgid "Generate Coupons"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:215
+msgid "Generated Coupons"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:219
+msgid "Export to CSV"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:234
+msgid "Security check failed"
+msgstr ""
+
+#: includes/class-coupolic-admin.php:239
+msgid "Insufficient permissions"
+msgstr ""
