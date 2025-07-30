@@ -71,7 +71,7 @@ class Coupolic_Admin {
             true
         );
 
-        wp_localize_script( 'coupolic-admin', 'coupolic_ajax', array(
+        wp_localize_script( 'coupolic-admin', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'coupolic_generate_nonce' ),
             'messages' => array(
@@ -230,13 +230,17 @@ class Coupolic_Admin {
      */
     public function ajax_generate_coupons() {
         // Verify nonce
-        if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( sanitize_text_field( $_POST['nonce'] ) ), 'coupolic_generate_nonce' ) ) {
+        if ( !isset( $_POST['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'coupolic_generate_nonce' ) ) {
             wp_send_json_error( esc_html__( 'Security check failed', 'coupolic' ) );
         }
 
         // Check permissions
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( esc_html__( 'Insufficient permissions', 'coupolic' ) );
+        }
+
+         if ( !current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( esc_html__( 'You do not have permission to generate coupons.', 'coupolic' ) );
         }
 
         // Get form data

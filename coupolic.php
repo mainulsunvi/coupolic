@@ -8,7 +8,7 @@
      *
      * @wordpress-plugin
      * Plugin Name: Coupolic
-     * Plugin URI: https://msunvi.com
+     * Plugin URI: https://wordpress.org/plugins/coupolic/
      * Description: Coupon Management Plugin for WordPress
      * Version: 1.0.0
      * Requires at least: 6.0
