@@ -1,10 +1,10 @@
 === Coupolic ===
 Contributors: mainulsunvi
-Tags: woocommerce, coupons, bulk, generator, discount
+Tags: coupons, discount, bulk discount, woocommerce, woocommerce coupon
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -79,6 +79,9 @@ The plugin will show a notice asking you to install and activate WooCommerce, as
 3. Individual coupon edit screen in WooCommerce
 
 == Changelog ==
+
+= 1.0.1 =
+* Minor Bug Resolved
 
 = 1.0.0 =
 * Initial release
