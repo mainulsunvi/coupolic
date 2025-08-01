@@ -1,10 +1,10 @@
-=== Coupolic ===
+=== Coupolic - Ultimate Bulk Coupon Generator for WooCommerce ===
 Contributors: mainulsunvi
 Tags: coupons, discount, bulk discount, woocommerce, woocommerce coupon
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -79,6 +79,10 @@ The plugin will show a notice asking you to install and activate WooCommerce, as
 3. Individual coupon edit screen in WooCommerce
 
 == Changelog ==
+
+= 1.0.2 =
+* UI style update
+* Added plugin Action link
 
 = 1.0.1 =
 * Minor Bug Resolved

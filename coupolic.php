@@ -1,16 +1,16 @@
 <?php
     /**
-     * @package           Coupolic
+     * @package           Coupolic - Ultimate Bulk Coupon Generator for WooCommerce
      * @author            Mainul Sunvi
      * @description       Coupon Management Plugin for WordPress
      * @license           GPL-3.0-or-later
      * @since             1.0.0
      *
      * @wordpress-plugin
-     * Plugin Name: Coupolic
+     * Plugin Name: Coupolic - Ultimate Bulk Coupon Generator for WooCommerce
      * Plugin URI: https://wordpress.org/plugins/coupolic/
      * Description: Coupon Management Plugin for WordPress
-     * Version: 1.0.1
+     * Version: 1.0.2
      * Requires at least: 6.0
      * Requires PHP: 7.4
      * Author: Mainul Sunvi
@@ -83,6 +83,7 @@
             // Include required files
             require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-admin.php';
             require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-generator.php';
+            require_once COUPOLIC_PLUGIN_DIR . 'includes/class-helper.php';
 
             // Initialize admin class
             if ( is_admin() ) {
