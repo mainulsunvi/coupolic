@@ -34,30 +34,58 @@ class Coupolic_Admin {
      * Add admin menu
      */
     public function add_admin_menu() {
+        // Main menu
         add_menu_page(
             esc_html__( 'Coupolic', 'coupolic' ),
             esc_html__( 'Coupolic', 'coupolic' ),
-            'manage_options',
+            'manage_woocommerce',
             'coupolic',
             array( $this, 'render_admin_page' ),
             'dashicons-tickets-alt',
             58
         );
-        // add_submenu_page(
-        //     'coupolic',
-        //     esc_html__( 'Bulk Coupon Generator', 'coupolic' ),
-        //     esc_html__( 'Bulk Coupons', 'coupolic' ),
-        //     'manage_woocommerce',
-        //     'coupolic-bulk-generator',
-        //     array( $this, 'render_admin_page' )
-        // );
+
+        // Coupon Generator submenu
+        add_submenu_page(
+            'coupolic',
+            esc_html__( 'Coupon Generator', 'coupolic' ),
+            esc_html__( 'Coupon Generator', 'coupolic' ),
+            'manage_woocommerce',
+            'coupolic'
+        );
+
+        // Logs & History submenu
+        add_submenu_page(
+            'coupolic',
+            esc_html__( 'Logs & History', 'coupolic' ),
+            esc_html__( 'Logs & History', 'coupolic' ),
+            'manage_woocommerce',
+            'coupolic-logs',
+            array( $this, 'render_logs_page' )
+        );
+
+        // Settings submenu
+        add_submenu_page(
+            'coupolic',
+            esc_html__( 'Settings', 'coupolic' ),
+            esc_html__( 'Settings', 'coupolic' ),
+            'manage_options',
+            'coupolic-settings',
+            array( $this, 'render_settings_page' )
+        );
     }
 
     /**
      * Enqueue admin assets
      */
     public function enqueue_admin_assets( $hook ) {
-        if ( 'toplevel_page_coupolic' !== $hook ) {
+        $valid_hooks = array(
+            'toplevel_page_coupolic',
+            'coupolic_page_coupolic-logs',
+            'coupolic_page_coupolic-settings'
+        );
+
+        if ( ! in_array( $hook, $valid_hooks, true ) ) {
             return;
         }
 
@@ -319,6 +347,30 @@ class Coupolic_Admin {
                     </p>
                 </div>
             </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render logs page
+     */
+    public function render_logs_page() {
+        ?>
+        <div class="wrap coupolic-wrap">
+            <h1><?php esc_html_e( 'Coupolic: Logs & History', 'coupolic' ); ?></h1>
+            <div id="coupolic-logs-app" class="coupolic-logs-container"></div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render settings page
+     */
+    public function render_settings_page() {
+        ?>
+        <div class="wrap coupolic-wrap">
+            <h1><?php esc_html_e( 'Coupolic: Settings', 'coupolic' ); ?></h1>
+            <div id="coupolic-settings-app" class="coupolic-settings-container"></div>
         </div>
         <?php
     }
