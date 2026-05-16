@@ -6,6 +6,13 @@ import GeneratorOptions from '@/pages/GeneratorOptions.vue'
 import GeneratingCoupons from '@/pages/GeneratingCoupons.vue'
 import ExportOptions from '@/pages/ExportOptions.vue'
 
+// NEW: Import wizard components
+import CouponWizard from '@/components/wizard/CouponWizard.vue'
+
+// NEW: Import logs components
+import LogsView from '@/components/logs/LogsView.vue'
+import LogsSettings from '@/components/logs/LogsSettings.vue'
+
 import General from '@/pages/GeneralOptions/General.vue'
 import UsageRestriction from '@/pages/GeneralOptions/UsageRestriction.vue'
 import UsageLimit from '@/pages/GeneralOptions/UsageLimit.vue'
@@ -16,7 +23,24 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: { path: '/general-options' },
+      redirect: { path: '/coupon-wizard' },
+    },
+    // NEW: Coupon wizard route
+    {
+      path: '/coupon-wizard',
+      name: 'coupon-wizard',
+      component: CouponWizard,
+    },
+    // NEW: Logs routes
+    {
+      path: '/logs',
+      name: 'logs',
+      component: LogsView,
+    },
+    {
+      path: '/logs/settings',
+      name: 'logs-settings',
+      component: LogsSettings,
     },
     {
       path: '/general-options',
