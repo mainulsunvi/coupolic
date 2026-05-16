@@ -3,15 +3,26 @@
  * Version: 1.0.0
  */
 
+ @import url(base.css);
+
 .coupolic-wrap {
     max-width: 800px;
-    margin: 20px 0;
+    margin: 20px 0px;
+    font-family: Inter !important;
+}
+
+.coupolic-wrap h1 {
+    font-size: 24px;
+    color: var(--coupolic-palette-900) !important;
+    margin-bottom: 20px;
+    font-weight: 600 !important;
+    /* font-family: Inter !important; */
 }
 
 .coupolic-form-wrapper {
     background: #fff;
-    border: 1px solid #ccd0d4;
-    border-radius: 4px;
+    border: 1px solid var(--coupolic-palette-900);
+    border-radius: 8px;
     padding: 20px;
     margin-top: 20px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
@@ -101,6 +112,12 @@
 
 .coupolic-coupon-actions a:hover {
     color: #0073aa;
+}
+
+.button#generate-coupons {
+    background-color: var(--coupolic-palette-800);
+    color: #fff;
+    border-radius: 6px;
 }
 
 .button#generate-coupons:disabled {
