@@ -17,69 +17,245 @@ if ( ! defined( 'WPINC' ) ) {
 class Coupolic_Generator {
 
     /**
-     * Generate bulk coupons
+     * Generate bulk coupons with rollback capability
      *
      * @param array $data Coupon data
+     * @param string $batch_id Unique batch identifier
      * @return array|WP_Error
      */
-    public function generate_bulk_coupons( $data ) {
+    public function generate_bulk_coupons( $data, $batch_id ) {
         $generated_coupons = array();
+        $rollback_ids = array();
+        $quantity = absint( $data['quantity'] );
 
-        for ( $i = 0; $i < $data['quantity']; $i++ ) {
-            $coupon_code = $this->generate_unique_code( $data['prefix'], $data['character_count'] );
+        // Initialize progress tracking
+        $this->update_progress( $batch_id, 0, $quantity, 'initializing', 'Starting generation...' );
 
-            $coupon = array(
-                'post_title'   => $coupon_code,
-                'post_content' => $data['description'],
-                'post_excerpt' => $data['description'],
-                'post_status'  => 'publish',
-                'post_author'  => get_current_user_id(),
-                'post_type'    => 'shop_coupon',
+        try {
+            for ( $i = 1; $i <= $quantity; $i++ ) {
+                // Generate unique coupon code
+                $coupon_code = $this->generate_unique_code( $data['prefix'] ?? 'COUPON', $data['character_count'] ?? 5 );
+
+                // Create coupon post
+                $coupon_post = array(
+                    'post_title'   => $coupon_code,
+                    'post_content' => $data['description'] ?? '',
+                    'post_excerpt' => $data['description'] ?? '',
+                    'post_status'  => 'publish',
+                    'post_author'  => get_current_user_id(),
+                    'post_type'    => 'shop_coupon',
+                );
+
+                $new_coupon_id = wp_insert_post( $coupon_post );
+
+                if ( is_wp_error( $new_coupon_id ) ) {
+                    throw new Exception( $new_coupon_id->get_error_message() );
+                }
+
+                $rollback_ids[] = $new_coupon_id;
+
+                // Add coupon meta
+                $this->add_coupon_meta( $new_coupon_id, $data );
+
+                // Add to generated list
+                $generated_coupons[] = array(
+                    'id'   => $new_coupon_id,
+                    'code' => $coupon_code,
+                    'link' => admin_url( 'post.php?post=' . $new_coupon_id . '&action=edit' ),
+                );
+
+                // Update progress
+                $this->update_progress( $batch_id, $i, $quantity, 'generating',
+                    sprintf( 'Generated coupon %d of %d', $i, $quantity )
+                );
+            }
+
+            // All coupons created successfully - log success
+            $this->log_generation_success( $batch_id, $generated_coupons, $data );
+
+            // Final progress update
+            $this->update_progress( $batch_id, $quantity, $quantity, 'completed', 'Generation completed successfully' );
+
+            return array(
+                'success' => true,
+                'batch_id' => $batch_id,
+                'coupons' => $generated_coupons,
+                'count'   => count( $generated_coupons ),
             );
-            
-            $new_coupon_id = wp_insert_post( $coupon );
-            
-            if ( is_wp_error( $new_coupon_id ) ) {
-                return $new_coupon_id;
+
+        } catch ( Exception $e ) {
+            // Rollback - delete all coupons created in this batch
+            foreach ( $rollback_ids as $coupon_id ) {
+                wp_delete_post( $coupon_id, true );
             }
-            
-            // Add coupon meta
-            update_post_meta( $new_coupon_id, 'discount_type', $data['discount_type'] );
-            update_post_meta( $new_coupon_id, 'coupon_amount', $data['amount'] );
-            update_post_meta( $new_coupon_id, 'individual_use', $data['individual_use'] ? 'yes' : 'no' );
-            update_post_meta( $new_coupon_id, 'usage_limit', $data['usage_limit'] );
-            update_post_meta( $new_coupon_id, 'usage_count', 0 );
-            
-            if ( ! empty( $data['expiry_date'] ) ) {
-                update_post_meta( $new_coupon_id, 'date_expires', strtotime( $data['expiry_date'] ) );
-            }
-            
-            if ( $data['minimum_amount'] > 0 ) {
-                update_post_meta( $new_coupon_id, 'minimum_amount', $data['minimum_amount'] );
-            }
-            
-            // Default meta values
-            update_post_meta( $new_coupon_id, 'product_ids', '' );
-            update_post_meta( $new_coupon_id, 'exclude_product_ids', '' );
-            update_post_meta( $new_coupon_id, 'usage_limit_per_user', '' );
-            update_post_meta( $new_coupon_id, 'limit_usage_to_x_items', '' );
-            update_post_meta( $new_coupon_id, 'free_shipping', 'no' );
-            update_post_meta( $new_coupon_id, 'exclude_sale_items', 'no' );
-            update_post_meta( $new_coupon_id, 'product_categories', array() );
-            update_post_meta( $new_coupon_id, 'exclude_product_categories', array() );
-            update_post_meta( $new_coupon_id, 'customer_email', array() );
-            
-            $generated_coupons[] = array(
-                'id'   => $new_coupon_id,
-                'code' => $coupon_code,
-                'link' => admin_url( 'post.php?post=' . $new_coupon_id . '&action=edit' ),
+
+            // Log failure
+            $this->log_generation_failure( $batch_id, $e->getMessage(), $data );
+
+            // Update progress with error
+            $this->update_progress( $batch_id, count( $generated_coupons ), $quantity, 'failed', $e->getMessage() );
+
+            return array(
+                'success' => false,
+                'error' => $e->getMessage(),
+                'batch_id' => $batch_id,
+                'generated_count' => count( $generated_coupons ),
             );
         }
-        
-        return array(
-            'coupons' => $generated_coupons,
-            'count'   => count( $generated_coupons ),
-        );
+    }
+
+    /**
+     * Add coupon meta data
+     */
+    private function add_coupon_meta( $coupon_id, $data ) {
+        // Basic discount settings
+        update_post_meta( $coupon_id, 'discount_type', $data['discount_type'] ?? 'fixed_cart' );
+        update_post_meta( $coupon_id, 'coupon_amount', $data['coupon_amount'] ?? 0 );
+        update_post_meta( $coupon_id, 'individual_use', ( $data['individual_use'] ?? false ) ? 'yes' : 'no' );
+        update_post_meta( $coupon_id, 'usage_limit', absint( $data['usage_limit'] ?? 1 ) );
+        update_post_meta( $coupon_id, 'usage_count', 0 );
+
+        // Expiry date
+        if ( ! empty( $data['expiry_date'] ) ) {
+            update_post_meta( $coupon_id, 'date_expires', strtotime( $data['expiry_date'] ) );
+        }
+
+        // Amount restrictions
+        if ( ! empty( $data['minimum_amount'] ) ) {
+            update_post_meta( $coupon_id, 'minimum_amount', floatval( $data['minimum_amount'] ) );
+        }
+
+        if ( ! empty( $data['maximum_amount'] ) ) {
+            update_post_meta( $coupon_id, 'maximum_amount', floatval( $data['maximum_amount'] ) );
+        }
+
+        // Product restrictions
+        if ( ! empty( $data['product_ids'] ) ) {
+            update_post_meta( $coupon_id, 'product_ids', explode( ',', $data['product_ids'] ) );
+        } else {
+            update_post_meta( $coupon_id, 'product_ids', array() );
+        }
+
+        if ( ! empty( $data['exclude_product_ids'] ) ) {
+            update_post_meta( $coupon_id, 'exclude_product_ids', explode( ',', $data['exclude_product_ids'] ) );
+        } else {
+            update_post_meta( $coupon_id, 'exclude_product_ids', array() );
+        }
+
+        // Category restrictions
+        if ( ! empty( $data['product_categories'] ) ) {
+            update_post_meta( $coupon_id, 'product_categories', explode( ',', $data['product_categories'] ) );
+        } else {
+            update_post_meta( $coupon_id, 'product_categories', array() );
+        }
+
+        if ( ! empty( $data['exclude_product_categories'] ) ) {
+            update_post_meta( $coupon_id, 'exclude_product_categories', explode( ',', $data['exclude_product_categories'] ) );
+        } else {
+            update_post_meta( $coupon_id, 'exclude_product_categories', array() );
+        }
+
+        // Brand restrictions (custom taxonomy)
+        if ( ! empty( $data['product_brands'] ) ) {
+            update_post_meta( $coupon_id, 'product_brands', explode( ',', $data['product_brands'] ) );
+        }
+
+        if ( ! empty( $data['exclude_product_brands'] ) ) {
+            update_post_meta( $coupon_id, 'exclude_product_brands', explode( ',', $data['exclude_product_brands'] ) );
+        }
+
+        // Email restrictions
+        if ( ! empty( $data['customer_email'] ) ) {
+            update_post_meta( $coupon_id, 'customer_email', explode( ',', $data['customer_email'] ) );
+        } else {
+            update_post_meta( $coupon_id, 'customer_email', array() );
+        }
+
+        // Additional settings
+        update_post_meta( $coupon_id, 'free_shipping', ( $data['free_shipping'] ?? false ) ? 'yes' : 'no' );
+        update_post_meta( $coupon_id, 'exclude_sale_items', ( $data['exclude_sale_items'] ?? false ) ? 'yes' : 'no' );
+        update_post_meta( $coupon_id, 'usage_limit_per_user', absint( $data['usage_limit_per_user'] ?? 0 ) );
+    }
+
+    /**
+     * Update generation progress
+     */
+    private function update_progress( $batch_id, $current, $total, $status, $message ) {
+        update_option( 'coupolic_progress_' . $batch_id, array(
+            'current' => $current,
+            'total' => $total,
+            'status' => $status,
+            'message' => $message,
+            'percentage' => ( $current / $total ) * 100,
+        ) );
+
+        // Set option to expire in 1 hour
+        set_transient( 'coupolic_progress_' . $batch_id, array(
+            'current' => $current,
+            'total' => $total,
+            'status' => $status,
+            'message' => $message,
+            'percentage' => ( $current / $total ) * 100,
+        ), 3600 );
+    }
+
+    /**
+     * Log generation success
+     */
+    private function log_generation_success( $batch_id, $coupons, $settings ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'coupolic_logs';
+
+        $user_id = get_current_user_id();
+        $user = get_userdata( $user_id );
+
+        // Calculate cleanup date
+        $retention_days = get_option( 'coupolic_log_retention', 90 );
+        $cleanup_date = date( 'Y-m-d H:i:s', strtotime( "+{$retention_days} days" ) );
+
+        $wpdb->insert( $table_name, array(
+            'batch_id' => $batch_id,
+            'user_id' => $user_id,
+            'user_login' => $user->user_login,
+            'generation_time' => current_time( 'mysql' ),
+            'coupon_count' => count( $coupons ),
+            'success_count' => count( $coupons ),
+            'failed_count' => 0,
+            'status' => 'completed',
+            'settings' => json_encode( $settings ),
+            'coupon_codes' => json_encode( $coupons ),
+            'cleanup_date' => $cleanup_date,
+        ) );
+    }
+
+    /**
+     * Log generation failure
+     */
+    private function log_generation_failure( $batch_id, $error_message, $settings ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'coupolic_logs';
+
+        $user_id = get_current_user_id();
+        $user = get_userdata( $user_id );
+
+        // Calculate cleanup date
+        $retention_days = get_option( 'coupolic_log_retention', 90 );
+        $cleanup_date = date( 'Y-m-d H:i:s', strtotime( "+{$retention_days} days" ) );
+
+        $wpdb->insert( $table_name, array(
+            'batch_id' => $batch_id,
+            'user_id' => $user_id,
+            'user_login' => $user->user_login,
+            'generation_time' => current_time( 'mysql' ),
+            'coupon_count' => 0,
+            'success_count' => 0,
+            'failed_count' => 0,
+            'status' => 'failed',
+            'settings' => json_encode( $settings ),
+            'coupon_codes' => json_encode( array() ),
+            'error_message' => $error_message,
+            'cleanup_date' => $cleanup_date,
+        ) );
     }
     
     /**
