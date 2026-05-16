@@ -20,6 +20,10 @@ class Coupolic_Admin {
      * Constructor
      */
     public function __construct() {
+        // Initialize installation
+        require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-install.php';
+        new Coupolic_Install();
+
         add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_action( 'wp_ajax_coupolic_generate_coupons', array( $this, 'ajax_generate_coupons' ) );
