@@ -1,16 +1,16 @@
 <?php
     /**
-     * @package           Coupolic
+     * @package           Coupolic - Ultimate Bulk Coupon Generator for WooCommerce
      * @author            Mainul Sunvi
      * @description       Coupon Management Plugin for WordPress
      * @license           GPL-3.0-or-later
      * @since             1.0.0
      *
      * @wordpress-plugin
-     * Plugin Name: Coupolic
-     * Plugin URI: https://msunvi.com
+     * Plugin Name: Coupolic - Ultimate Bulk Coupon Generator for WooCommerce
+     * Plugin URI: https://wordpress.org/plugins/coupolic/
      * Description: Coupon Management Plugin for WordPress
-     * Version: 1.0.0
+     * Version: 1.0.2
      * Requires at least: 6.0
      * Requires PHP: 7.4
      * Author: Mainul Sunvi
@@ -26,9 +26,17 @@
         die;
     }
 
+    if ( ! function_exists( 'get_plugin_data' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+
+    define( 'COUPILIC_DATA', get_plugin_data( __FILE__ ) );
+
+
     // Define plugin constants
-    define( 'COUPOLIC_VERSION', '1.0.0' );
-    define( 'COUPOLIC_DIR', plugin_dir_path( __FILE__ ) );
+    define( 'COUPOLIC_VERSION', COUPILIC_DATA['Version'] );
+    define( 'COUPOLIC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+    define( 'COUPOLIC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
     define( 'COUPOLIC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
     define( 'COUPOLIC_URL', plugin_dir_url( __FILE__ ) );
 
@@ -74,8 +82,9 @@
             }
 
             // Include required files
-            require_once COUPOLIC_DIR . 'includes/class-coupolic-admin.php';
-            require_once COUPOLIC_DIR . 'includes/class-coupolic-generator.php';
+            require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-admin.php';
+            require_once COUPOLIC_PLUGIN_DIR . 'includes/class-coupolic-generator.php';
+            require_once COUPOLIC_PLUGIN_DIR . 'includes/class-helper.php';
 
             // Initialize admin class
             if ( is_admin() ) {

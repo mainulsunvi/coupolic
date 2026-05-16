@@ -113,12 +113,12 @@ class Coupolic_Admin {
         );
 
         if( !empty($_GET["action"]) &&  sanitize_text_field( $_GET["action"]) === "new_ui" ) {
-            // wp_enqueue_script( 'coupolic-admin-ui',
-            //     'http://localhost:5173/src/main.js',
-            //     array(),
-            //     time(),
-            //     false
-            // );
+            wp_enqueue_script( 'coupolic-admin-ui',
+                'http://localhost:5173/src/main.js',
+                array(),
+                time(),
+                false
+            );
 
             wp_enqueue_script( 'coupolic-admin-ui',
                 COUPOLIC_URL . '/assets/build/coupolic-ui-scripts.js',
@@ -131,21 +131,21 @@ class Coupolic_Admin {
                 array(),
                 time()
             );
+        }
 
-            wp_localize_script( 'coupolic-admin-ui', 'coupolic', array(
+        wp_localize_script( 'coupolic-admin', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'rest_url'   => esc_url( rest_url() ),
             'products'   => json_encode( $products ),
             'categories' => json_encode( $categories ),
             'brands'     => json_encode( $product_brands ),
-            'nonce'    => wp_create_nonce( 'coupolic_nonce' ),
+            'nonce'    => wp_create_nonce( 'coupolic_generate_nonce' ),
             'messages' => array(
                 'generating' => esc_html__( 'Generating coupons...', 'coupolic' ),
                 'success'    => esc_html__( 'Coupons generated successfully!', 'coupolic' ),
                 'error'      => esc_html__( 'An error occurred. Please try again.', 'coupolic' ),
             ),
         ) );
-        }
 
         wp_localize_script( 'coupolic-admin', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -217,7 +217,6 @@ class Coupolic_Admin {
                                 <p class="description"><?php esc_html_e( 'Number of coupons to generate (max 100)', 'coupolic' ); ?></p>
                             </td>
                         </tr>
-                        
                         <tr>
                             <th scope="row">
                                 <label for="discount_type"><?php esc_html_e( 'Discount Type', 'coupolic' ); ?></label>
@@ -325,13 +324,17 @@ class Coupolic_Admin {
      */
     public function ajax_generate_coupons() {
         // Verify nonce
-        if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( wp_unslash( sanitize_text_field( $_POST['nonce'] ) ), 'coupolic_nonce' ) ) {
+        if ( !isset( $_POST['nonce'] ) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'coupolic_generate_nonce' ) ) {
             wp_send_json_error( esc_html__( 'Security check failed', 'coupolic' ) );
         }
 
         // Check permissions
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( esc_html__( 'Insufficient permissions', 'coupolic' ) );
+        }
+
+         if ( !current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( esc_html__( 'You do not have permission to generate coupons.', 'coupolic' ) );
         }
 
         // Get form data
