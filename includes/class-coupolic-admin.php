@@ -73,7 +73,7 @@ class Coupolic_Admin {
             'coupolic',
             esc_html__( 'Settings', 'coupolic' ),
             esc_html__( 'Settings', 'coupolic' ),
-            'manage_options',
+            'manage_woocommerce',
             'coupolic-settings',
             array( $this, 'render_settings_page' )
         );
@@ -148,7 +148,7 @@ class Coupolic_Admin {
             true
         );
 
-        if( !empty($_GET["action"]) &&  sanitize_text_field( $_GET["action"]) === "new_ui" ) {
+        // if( !empty($_GET["action"]) &&  sanitize_text_field( $_GET["action"]) === "new_ui" ) {
             wp_enqueue_script( 'coupolic-admin-ui',
                 'http://localhost:5173/src/main.js',
                 array(),
@@ -156,18 +156,18 @@ class Coupolic_Admin {
                 false
             );
 
-            wp_enqueue_script( 'coupolic-admin-ui',
-                COUPOLIC_URL . '/assets/build/coupolic-ui-scripts.js',
-                array(),
-                time(),
-                false
-            );
+            // wp_enqueue_script( 'coupolic-admin-ui',
+            //     COUPOLIC_URL . '/assets/build/coupolic-ui-scripts.js',
+            //     array(),
+            //     time(),
+            //     false
+            // );
             wp_enqueue_style( 'coupolic-admin-ui-style',
                 COUPOLIC_URL . '/assets/build/coupolic-ui-styles.css',
                 array(),
                 time()
             );
-        }
+        // }
 
         wp_localize_script( 'coupolic-admin', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -183,13 +183,31 @@ class Coupolic_Admin {
             ),
         ) );
 
+        $current_user = wp_get_current_user();
+        $user_roles = $current_user->roles;
+
+        // Determine current admin page
+        $current_page = 'coupon-generator';
+        if ( isset( $_GET['page'] ) ) {
+            $page = sanitize_text_field( $_GET['page'] );
+            if ( $page === 'coupolic-logs' ) {
+                $current_page = 'logs';
+            } elseif ( $page === 'coupolic-settings' ) {
+                $current_page = 'settings';
+            }
+        }
+
         wp_localize_script( 'coupolic-admin', 'coupolic', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'rest_url'   => esc_url( rest_url() ),
             'products'   => json_encode( $products ),
             'categories' => json_encode( $categories ),
             'brands'     => json_encode( $product_brands ),
+            'version'   => COUPOLIC_VERSION,
             'nonce'    => wp_create_nonce( 'coupolic_nonce' ),
+            'current_user_can' => $user_roles[0] ?? '',
+            'current_user_roles' => $user_roles,
+            'current_page' => $current_page,
             'messages' => array(
                 'generating' => esc_html__( 'Generating coupons...', 'coupolic' ),
                 'success'    => esc_html__( 'Coupons generated successfully!', 'coupolic' ),
@@ -211,14 +229,14 @@ class Coupolic_Admin {
      * Render admin page
      */
     public function render_admin_page() {
-        if( !empty($_GET["action"]) && sanitize_text_field( $_GET["action"]) === "new_ui" ) {
+        // if( !empty($_GET["action"]) && sanitize_text_field( $_GET["action"]) === "new_ui" ) {
             ?>
             <div id="coupolic-app" class="wrap"></div>
             <?php
             return;
-        }
+        // }
         ?>
-        <div class="wrap coupolic-wrap">
+        <!-- <div class="wrap coupolic-wrap">
             <h1><?php esc_html_e( 'Coupolic: Bulk Coupon Generator', 'coupolic' ); ?></h1>
             
             <div class="coupolic-form-wrapper">
@@ -351,7 +369,7 @@ class Coupolic_Admin {
                     </p>
                 </div>
             </div>
-        </div>
+        </div> -->
         <?php
     }
 
@@ -361,8 +379,7 @@ class Coupolic_Admin {
     public function render_logs_page() {
         ?>
         <div class="wrap coupolic-wrap">
-            <h1><?php esc_html_e( 'Coupolic: Logs & History', 'coupolic' ); ?></h1>
-            <div id="coupolic-logs-app" class="coupolic-logs-container"></div>
+            <div id="coupolic-app"></div>
         </div>
         <?php
     }
@@ -373,8 +390,7 @@ class Coupolic_Admin {
     public function render_settings_page() {
         ?>
         <div class="wrap coupolic-wrap">
-            <h1><?php esc_html_e( 'Coupolic: Settings', 'coupolic' ); ?></h1>
-            <div id="coupolic-settings-app" class="coupolic-settings-container"></div>
+            <div id="coupolic-app"></div>
         </div>
         <?php
     }
@@ -429,5 +445,109 @@ class Coupolic_Admin {
         }
 
         wp_send_json_success( $result );
+    }
+
+    /**
+     * Get user limits based on role
+     */
+    public static function get_user_limits( $role = '', $quantity = 0 ) {
+        if ( empty( $role ) ) {
+            $user = wp_get_current_user();
+            $role = $user->roles[0] ?? '';
+        }
+
+        $settings = get_option( 'coupolic_settings', array() );
+        $default_limits = array(
+            'max_coupons_per_batch' => 100,
+            'max_coupons_per_day' => 500,
+            'max_coupons_total' => 5000,
+        );
+
+        if ( isset( $settings['user_limits'][ $role ] ) ) {
+            $limits = $settings['user_limits'][ $role ];
+        } else {
+            $limits = $default_limits;
+        }
+
+        // Check if quantity exceeds limits
+        if ( $quantity > 0 ) {
+            if ( $quantity > $limits['max_coupons_per_batch'] ) {
+                return new WP_Error(
+                    'batch_limit_exceeded',
+                    sprintf(
+                        esc_html__( 'Maximum %d coupons per batch for %s role', 'coupolic' ),
+                        $limits['max_coupons_per_batch'],
+                        $role
+                    )
+                );
+            }
+
+            // Check daily limit
+            $today = gmdate( 'Y-m-d' );
+            $daily_count = self::get_user_coupon_count( get_current_user_id(), $today );
+
+            if ( ( $daily_count + $quantity ) > $limits['max_coupons_per_day'] ) {
+                return new WP_Error(
+                    'daily_limit_exceeded',
+                    sprintf(
+                        esc_html__( 'Daily limit of %d coupons exceeded. You have generated %d coupons today.', 'coupolic' ),
+                        $limits['max_coupons_per_day'],
+                        $daily_count
+                    )
+                );
+            }
+
+            // Check total limit
+            $total_count = self::get_user_total_coupon_count( get_current_user_id() );
+
+            if ( ( $total_count + $quantity ) > $limits['max_coupons_total'] ) {
+                return new WP_Error(
+                    'total_limit_exceeded',
+                    sprintf(
+                        esc_html__( 'Total limit of %d coupons exceeded. You have generated %d coupons total.', 'coupolic' ),
+                        $limits['max_coupons_total'],
+                        $total_count
+                    )
+                );
+            }
+        }
+
+        return $limits;
+    }
+
+    /**
+     * Get user's coupon count for today
+     */
+    private static function get_user_coupon_count( $user_id, $date ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'coupolic_logs';
+
+        $count = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name
+            WHERE user_id = %d
+            AND DATE(generation_time) = %s
+            AND status = 'completed'",
+            $user_id,
+            $date
+        ) );
+
+        return absint( $count );
+    }
+
+    /**
+     * Get user's total coupon count
+     */
+    private static function get_user_total_coupon_count( $user_id ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'coupolic_logs';
+
+        $count = $wpdb->get_var( $wpdb->prepare(
+            "SELECT SUM(coupon_count) FROM $table_name
+            WHERE user_id = %d
+            AND status = 'completed'",
+            $user_id
+        ) );
+
+        return absint( $count );
     }
 }

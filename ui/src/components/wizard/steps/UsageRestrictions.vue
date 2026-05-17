@@ -2,6 +2,7 @@
 import { inject } from 'vue'
 import Input from '@/components/fields/Input.vue'
 import Select from '@/components/fields/Select.vue'
+import MultiSelect from '@/components/fields/MultiSelect.vue'
 import { useWizardState } from '@/composables/useWizardState.js'
 
 const wizardState = useWizardState()
@@ -50,6 +51,17 @@ if (typeof coupolic !== 'undefined' && coupolic.brands) {
 function handleFieldChange(field, value) {
   wizardState.updateFormData(field, value)
 }
+
+// Convert string values to arrays for MultiSelect
+function getArrayValue(value) {
+  if (Array.isArray(value)) {
+    return value
+  }
+  if (value && typeof value === 'string') {
+    return value.split(',').map(function(v) { return v.trim() }).filter(function(v) { return v })
+  }
+  return []
+}
 </script>
 
 <template>
@@ -60,61 +72,67 @@ function handleFieldChange(field, value) {
     <form @submit.prevent="" class="coupon-form">
       <div class="form-section">
         <h3>Product Restrictions</h3>
-        <Select
+        <MultiSelect
           :options="products"
           name="product_ids"
           label="Products"
           subtitle="Select products this coupon applies to (leave empty for all products)"
-          :value="wizardState.formData.value.product_ids"
+          :value="getArrayValue(wizardState.formData.product_ids)"
           @input="handleFieldChange('product_ids', $event)"
+          placeholder="Select products..."
         />
-        <Select
+        <MultiSelect
           :options="products"
           name="exclude_product_ids"
           label="Exclude Products"
           subtitle="Select products this coupon should NOT apply to"
-          :value="wizardState.formData.value.exclude_product_ids"
+          :value="getArrayValue(wizardState.formData.exclude_product_ids)"
           @input="handleFieldChange('exclude_product_ids', $event)"
+          placeholder="Select products to exclude..."
         />
       </div>
 
       <div class="form-section">
         <h3>Category Restrictions</h3>
-        <Select
+        <MultiSelect
           :options="categories"
           name="product_categories"
           label="Product Categories"
           subtitle="Select categories this coupon applies to (leave empty for all categories)"
-          :value="wizardState.formData.value.product_categories"
+          :value="getArrayValue(wizardState.formData.product_categories)"
           @input="handleFieldChange('product_categories', $event)"
+          placeholder="Select categories..."
         />
-        <Select
+        <MultiSelect
           :options="categories"
           name="exclude_product_categories"
           label="Exclude Categories"
           subtitle="Select categories this coupon should NOT apply to"
-          :value="wizardState.formData.value.exclude_product_categories"
+          :value="getArrayValue(wizardState.formData.exclude_product_categories)"
           @input="handleFieldChange('exclude_product_categories', $event)"
+          placeholder="Select categories to exclude..."
         />
       </div>
 
       <div class="form-section">
         <h3>Brand Restrictions</h3>
-        <Select
+        <MultiSelect
           :options="brands"
           name="product_brands"
           label="Product Brands"
           subtitle="Select brands this coupon applies to (leave empty for all brands)"
-          :value="wizardState.formData.value.product_brands"
+          :value="getArrayValue(wizardState.formData.product_brands)"
           @input="handleFieldChange('product_brands', $event)"
+          placeholder="Select brands..."
         />
-        <Select
+        <MultiSelect
           :options="brands"
           name="exclude_product_brands"
           label="Exclude Brands"
           subtitle="Select brands this coupon should NOT apply to"
-          :value="wizardState.formData.value.exclude_product_brands"
+          :value="getArrayValue(wizardState.formData.exclude_product_brands)"
           @input="handleFieldChange('exclude_product_brands', $event)"
+          placeholder="Select brands to exclude..."
         />
       </div>
 
@@ -126,7 +144,7 @@ function handleFieldChange(field, value) {
           label="Allowed Emails"
           subtitle="Comma-separated list of allowed emails. Use * for wildcards (e.g., *@gmail.com)"
           placeholder="No restrictions"
-          :value="wizardState.formData.value.customer_email"
+          :value="wizardState.formData.customer_email"
           @input="handleFieldChange('customer_email', $event)"
         />
       </div>
@@ -136,39 +154,42 @@ function handleFieldChange(field, value) {
 
 <style scoped>
 .step-container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 h2 {
-  font-size: 24px;
-  margin-bottom: 8px;
-  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .step-description {
-  color: #666;
-  margin-bottom: 24px;
-  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
 .coupon-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
 .form-section {
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
 }
 
 .form-section h3 {
-  font-size: 16px;
-  margin-bottom: 16px;
-  color: #444;
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  padding-bottom: 0.75rem;
 }
 </style>

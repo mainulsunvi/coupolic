@@ -1,6 +1,4 @@
 <script setup>
-import { Icon } from '@iconify/vue'
-
 const props = defineProps({
   currentStep: {
     type: Number,
@@ -15,12 +13,12 @@ const props = defineProps({
 const emit = defineEmits(['step-click'])
 
 const steps = [
-  { number: 1, name: 'Basic Settings', icon: 'proicons:settings' },
-  { number: 2, name: 'Date & Shipping', icon: 'proicons:calendar' },
-  { number: 3, name: 'Usage Restrictions', icon: 'proicons:alert-rhombus' },
-  { number: 4, name: 'Spending Rules', icon: 'proicons:wallet' },
-  { number: 5, name: 'Generator Options', icon: 'proicons:ticket' },
-  { number: 6, name: 'Review & Generate', icon: 'proicons:check-circle' },
+  { number: 1, name: 'Basic Settings' },
+  { number: 2, name: 'Date & Shipping' },
+  { number: 3, name: 'Usage Restrictions' },
+  { number: 4, name: 'Spending Rules' },
+  { number: 5, name: 'Generator Options' },
+  { number: 6, name: 'Review & Generate' },
 ]
 
 function getStepClass(stepNumber) {
@@ -52,15 +50,12 @@ function handleStepClick(stepNumber) {
         @click="handleStepClick(step.number)"
       >
         <div class="tab-icon">
-          <Icon :icon="step.icon" width="20" height="20" />
+          <span v-if="step.number < currentStep">✓</span>
+          <span v-else>{{ step.number }}</span>
         </div>
         <div class="tab-content">
           <div class="step-number">Step {{ step.number }}</div>
           <div class="step-name">{{ step.name }}</div>
-        </div>
-        <div class="tab-status">
-          <span v-if="step.number < currentStep" class="completed-badge">✓</span>
-          <span v-else-if="step.number === currentStep" class="current-badge">Active</span>
         </div>
       </div>
     </div>
@@ -69,119 +64,143 @@ function handleStepClick(stepNumber) {
 
 <style scoped>
 .wizard-tabs {
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 }
 
 .progress-bar {
   height: 4px;
-  background-color: #e0e0e0;
-  border-radius: 2px;
-  margin-bottom: 20px;
+  background: var(--bg-tertiary);
+  margin-bottom: 2rem;
   overflow: hidden;
+  display: none;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4CAF50, #45a049);
+  background: var(--accent-blue);
   transition: width 0.3s ease;
 }
 
 .tabs-container {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0;
 }
 
 .tab-item {
   flex: 1;
-  min-width: 150px;
-  padding: 15px;
-  background: #f5f5f5;
-  border-radius: 8px;
+  text-align: center;
+  position: relative;
+  padding: 0 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: 2px solid transparent;
 }
 
-.tab-item:hover {
-  background: #eeeeee;
+.tab-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border-light);
+  z-index: 0;
 }
 
-.tab-item.step-active {
-  background: #e8f5e9;
-  border-color: #4CAF50;
+.tab-item.step-completed:not(:last-child)::after {
+  background: var(--success);
 }
 
-.tab-item.step-completed {
-  background: #f1f8f4;
-  border-color: #45a049;
-}
-
-.tab-item.step-pending {
-  opacity: 0.7;
+.tab-item.step-active:not(:last-child)::after {
+  background: linear-gradient(to right, var(--success) 50%, var(--border-light) 50%);
 }
 
 .tab-icon {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: white;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-medium);
+  margin: 0 auto 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition-base);
 }
 
-.step-active .tab-icon {
-  background: #4CAF50;
+.tab-item.step-active .tab-icon {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: white;
+  font-weight: 600;
+}
+
+.tab-item.step-completed .tab-icon {
+  background: var(--success);
+  border-color: var(--success);
   color: white;
 }
 
 .tab-content {
-  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .step-number {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 2px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tab-item.step-active .step-number {
+  color: var(--accent-blue);
+}
+
+.tab-item.step-completed .step-number {
+  color: var(--success);
 }
 
 .step-name {
-  font-size: 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.tab-item.step-active .step-name {
+  color: var(--text-primary);
   font-weight: 600;
-  color: #333;
 }
 
-.tab-status {
-  display: flex;
-  align-items: center;
+.tab-item.step-completed .step-name {
+  color: var(--text-primary);
 }
 
-.completed-badge {
-  color: #4CAF50;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.current-badge {
-  background: #4CAF50;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
+.tab-item.step-pending {
+  opacity: 0.5;
+  cursor: default;
 }
 
 @media (max-width: 768px) {
   .tabs-container {
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
   .tab-item {
-    min-width: 100%;
+    flex: 0 0 calc(33.333% - 0.667rem);
+    min-width: 0;
+  }
+
+  .tab-item:not(:last-child)::after {
+    display: none;
   }
 }
 </style>

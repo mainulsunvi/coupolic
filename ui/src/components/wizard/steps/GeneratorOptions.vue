@@ -9,7 +9,7 @@ const wizardState = useWizardState()
 const validation = useValidation()
 
 const userLimitText = computed(function() {
-  const limits = wizardState.userLimits.value
+  const limits = wizardState.userLimits
   if (limits.daily_limit === -1) {
     return 'Unlimited coupons per day'
   } else {
@@ -19,7 +19,7 @@ const userLimitText = computed(function() {
 
 function handleFieldChange(field, value) {
   wizardState.updateFormData(field, value)
-  validation.validateField(field, value, wizardState.formData.value)
+  validation.validateField(field, value, wizardState.formData)
 }
 </script>
 
@@ -28,10 +28,10 @@ function handleFieldChange(field, value) {
     <h2>Generator Options</h2>
     <p class="step-description">Configure how many coupons to generate and their format.</p>
 
-    <div class="user-limits" v-if="wizardState.userLimits.value">
+    <div class="user-limits" v-if="wizardState.userLimits && wizardState.userLimits.daily_limit !== undefined">
       <h4>📊 Your Limits</h4>
       <p>{{ userLimitText }}</p>
-      <p>Maximum per batch: {{ wizardState.userLimits.value.batch_limit === -1 ? 'Unlimited' : wizardState.userLimits.value.batch_limit }}</p>
+      <p>Maximum per batch: {{ wizardState.userLimits.batch_limit === -1 ? 'Unlimited' : wizardState.userLimits.batch_limit }}</p>
     </div>
 
     <form @submit.prevent="" class="coupon-form">
@@ -41,7 +41,7 @@ function handleFieldChange(field, value) {
         label="Coupon Prefix"
         subtitle="Prefix for generated coupon codes (e.g., SUMMER_2025_)"
         placeholder="COUPON"
-        :value="wizardState.formData.value.prefix"
+        :value="wizardState.formData.prefix"
         @input="handleFieldChange('prefix', $event)"
       />
 
@@ -50,7 +50,7 @@ function handleFieldChange(field, value) {
         name="character_count"
         label="Number of Characters"
         subtitle="Length of the random part of the coupon code (5-20 characters)"
-        :value="wizardState.formData.value.character_count"
+        :value="wizardState.formData.character_count"
         @input="handleFieldChange('character_count', $event)"
         min="5"
         max="20"
@@ -61,16 +61,16 @@ function handleFieldChange(field, value) {
         name="quantity"
         label="Number of Coupons"
         subtitle="How many coupons to generate in this batch"
-        :value="wizardState.formData.value.quantity"
+        :value="wizardState.formData.quantity"
         @input="handleFieldChange('quantity', $event)"
         min="1"
-        :max="wizardState.userLimits.value.batch_limit || 100"
+        :max="wizardState.userLimits.batch_limit || 100"
       />
 
       <div class="preview-box">
         <h4>Preview</h4>
-        <p>Example coupon code: <code>{{ wizardState.formData.value.prefix }}_XXXXX</code></p>
-        <p>Will generate: <strong>{{ wizardState.formData.value.quantity }}</strong> coupons</p>
+        <p>Example coupon code: <code>{{ wizardState.formData.prefix }}_XXXXX</code></p>
+        <p>Will generate: <strong>{{ wizardState.formData.quantity }}</strong> coupons</p>
       </div>
     </form>
   </div>

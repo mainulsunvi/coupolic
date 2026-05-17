@@ -28,6 +28,11 @@ class Coupolic_API {
         // Generation
         add_action( 'wp_ajax_coupolic_generate_coupons', array( $this, 'ajax_generate_coupons' ) );
         add_action( 'wp_ajax_coupolic_check_progress', array( $this, 'ajax_check_progress' ) );
+        add_action( 'wp_ajax_coupolic_get_generation_results', array( $this, 'ajax_get_generation_results' ) );
+        add_action( 'wp_ajax_coupolic_cleanup_progress', array( $this, 'ajax_cleanup_progress' ) );
+
+        // Background generation
+        add_action( 'coupolic_background_generate', array( $this, 'background_generate_coupons' ) );
 
         // Validation
         add_action( 'wp_ajax_coupolic_validate_settings', array( $this, 'ajax_validate_settings' ) );
@@ -41,6 +46,7 @@ class Coupolic_API {
 
         // Settings
         add_action( 'wp_ajax_coupolic_save_settings', array( $this, 'ajax_save_settings' ) );
+        add_action( 'wp_ajax_coupolic_get_settings', array( $this, 'ajax_get_settings' ) );
     }
 
     /**
@@ -265,7 +271,7 @@ class Coupolic_API {
         // Generate unique batch ID
         $batch_id = 'CMP_' . time() . '_' . rand( 1000, 9999 );
 
-        // Initialize progress tracking
+        // Initialize progress tracking BEFORE starting generation
         update_option( 'coupolic_progress_' . $batch_id, array(
             'current' => 0,
             'total' => $quantity,
@@ -274,14 +280,20 @@ class Coupolic_API {
             'percentage' => 0,
         ) );
 
-        // Start generation in background
+        // Flush the progress to ensure it's available immediately
+        wp_cache_flush();
+
+        // Start generation (this will update progress as it goes)
         $generator = new Coupolic_Generator();
         $result = $generator->generate_bulk_coupons( $data, $batch_id );
 
         if ( $result['success'] ) {
             wp_send_json_success( array(
                 'batch_id' => $batch_id,
+                'total_count' => $result['count'],
                 'count' => $result['count'],
+                'coupons' => $result['coupons'],
+                'generated_at' => time(),
                 'message' => esc_html__( 'Generation completed successfully', 'coupolic' )
             ) );
         } else {
@@ -290,6 +302,54 @@ class Coupolic_API {
                 'batch_id' => $batch_id
             ) );
         }
+    }
+
+    /**
+     * AJAX: Check generation status and get final results
+     */
+    public function ajax_get_generation_results() {
+        $this->verify_request();
+
+        $batch_id = isset( $_POST['batch_id'] ) ? sanitize_text_field( $_POST['batch_id'] ) : '';
+
+        if ( ! $batch_id ) {
+            wp_send_json_error( array( 'message' => esc_html__( 'Invalid batch ID', 'coupolic' ) ) );
+        }
+
+        // Check progress
+        $progress = get_transient( 'coupolic_progress_' . $batch_id );
+        if ( ! $progress ) {
+            $progress = get_option( 'coupolic_progress_' . $batch_id );
+        }
+
+        if ( ! $progress ) {
+            wp_send_json_error( array( 'message' => esc_html__( 'Generation not found', 'coupolic' ) ) );
+        }
+
+        // Return progress and final results if available
+        $response = array(
+            'progress' => $progress,
+            'status' => $progress['status']
+        );
+
+        // If completed, try to get the actual coupon data from logs
+        if ( $progress['status'] === 'completed' ) {
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'coupolic_logs';
+
+            $log = $wpdb->get_row( $wpdb->prepare(
+                "SELECT * FROM $table_name WHERE batch_id = %s LIMIT 1",
+                $batch_id
+            ) );
+
+            if ( $log ) {
+                $response['coupons'] = json_decode( $log->coupon_codes, true );
+                $response['count'] = count( $response['coupons'] );
+                $response['generated_at'] = strtotime( $log->generation_time );
+            }
+        }
+
+        wp_send_json_success( $response );
     }
 
     /**
@@ -304,13 +364,48 @@ class Coupolic_API {
             wp_send_json_error( array( 'message' => esc_html__( 'Invalid batch ID', 'coupolic' ) ) );
         }
 
-        $progress = get_option( 'coupolic_progress_' . $batch_id );
+        // Try transient first (what generator uses), fallback to option
+        $progress = get_transient( 'coupolic_progress_' . $batch_id );
+        if ( ! $progress ) {
+            $progress = get_option( 'coupolic_progress_' . $batch_id );
+        }
 
         if ( ! $progress ) {
             wp_send_json_error( array( 'message' => esc_html__( 'Progress not found', 'coupolic' ) ) );
         }
 
         wp_send_json_success( array( 'progress' => $progress ) );
+    }
+
+    /**
+     * AJAX: Cleanup progress data
+     */
+    public function ajax_cleanup_progress() {
+        $this->verify_request();
+
+        $batch_id = isset( $_POST['batch_id'] ) ? sanitize_text_field( $_POST['batch_id'] ) : '';
+
+        if ( ! $batch_id ) {
+            wp_send_json_error( array( 'message' => esc_html__( 'Invalid batch ID', 'coupolic' ) ) );
+        }
+
+        // Clean up both transient and option
+        delete_transient( 'coupolic_progress_' . $batch_id );
+        delete_option( 'coupolic_progress_' . $batch_id );
+
+        wp_send_json_success( array( 'message' => esc_html__( 'Progress cleaned up', 'coupolic' ) ) );
+    }
+
+    /**
+     * Background generation callback (called by WordPress cron)
+     */
+    public function background_generate_coupons( $data, $batch_id ) {
+        // Start generation in background
+        $generator = new Coupolic_Generator();
+        $result = $generator->generate_bulk_coupons( $data, $batch_id );
+
+        // The generator handles progress updates and logging internally
+        // No need to do anything else here
     }
 
     /**
@@ -394,10 +489,28 @@ class Coupolic_API {
             wp_send_json_error( array( 'message' => esc_html__( 'Batch not found', 'coupolic' ) ) );
         }
 
-        $log->settings = json_decode( $log->settings, true );
-        $log->coupon_codes = json_decode( $log->coupon_codes, true );
+        // Decode JSON fields
+        $settings = json_decode( $log->settings, true );
+        $coupon_codes = json_decode( $log->coupon_codes, true );
 
-        wp_send_json_success( array( 'batch' => $log ) );
+        // Prepare response data with expected structure
+        $batch_data = array(
+            'id' => $log->id,
+            'batch_id' => $log->batch_id,
+            'user_id' => $log->user_id,
+            'user_login' => $log->user_login,
+            'generation_time' => $log->generation_time,
+            'coupon_count' => $log->coupon_count,
+            'success_count' => $log->success_count,
+            'failed_count' => $log->failed_count,
+            'status' => $log->status,
+            'error_message' => $log->error_message,
+            'settings' => $settings,
+            'coupons' => $coupon_codes, // Frontend expects 'coupons', not 'coupon_codes'
+            'cleanup_date' => $log->cleanup_date,
+        );
+
+        wp_send_json_success( $batch_data );
     }
 
     /**
@@ -510,17 +623,85 @@ class Coupolic_API {
     public function ajax_save_settings() {
         $this->verify_request();
 
-        // Only super admins can modify settings
-        if ( ! current_user_can( 'manage_options' ) ) {
+        // Only admins can modify settings
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
             wp_send_json_error( array( 'message' => esc_html__( 'Insufficient permissions', 'coupolic' ) ) );
         }
 
-        $retention = isset( $_POST['log_retention'] ) ? absint( $_POST['log_retention'] ) : 90;
-        $schedule = isset( $_POST['cleanup_schedule'] ) ? sanitize_text_field( $_POST['cleanup_schedule'] ) : 'daily';
+        // Sanitize and save settings
+        $settings = array(
+            'user_limits' => array(
+                'administrator' => array(
+                    'max_coupons_per_batch' => absint( $_POST['admin_max_coupons'] ?? 1000 ),
+                    'max_coupons_per_day' => absint( $_POST['admin_max_daily'] ?? 5000 ),
+                    'max_coupons_total' => absint( $_POST['admin_max_total'] ?? 50000 ),
+                ),
+                'shop_manager' => array(
+                    'max_coupons_per_batch' => absint( $_POST['manager_max_coupons'] ?? 100 ),
+                    'max_coupons_per_day' => absint( $_POST['manager_max_daily'] ?? 500 ),
+                    'max_coupons_total' => absint( $_POST['manager_max_total'] ?? 5000 ),
+                ),
+            ),
+            'data_retention' => array(
+                'log_retention_days' => absint( $_POST['log_retention_days'] ?? 90 ),
+                'auto_delete_logs' => isset( $_POST['auto_delete_logs'] ) && $_POST['auto_delete_logs'] === '1',
+                'cleanup_expired_coupons' => isset( $_POST['cleanup_expired_coupons'] ) && $_POST['cleanup_expired_coupons'] === '1',
+            ),
+            'generator_settings' => array(
+                'default_quantity' => absint( $_POST['default_quantity'] ?? 10 ),
+                'default_prefix' => sanitize_text_field( $_POST['default_prefix'] ?? 'COUPON' ),
+                'default_character_count' => absint( $_POST['default_character_count'] ?? 5 ),
+                'allow_bulk_generation' => isset( $_POST['allow_bulk_generation'] ) && $_POST['allow_bulk_generation'] === '1',
+            ),
+        );
 
-        update_option( 'coupolic_log_retention', $retention );
-        update_option( 'coupolic_cleanup_schedule', $schedule );
-
+        update_option( 'coupolic_settings', $settings );
         wp_send_json_success( array( 'message' => esc_html__( 'Settings saved successfully', 'coupolic' ) ) );
+    }
+
+    /**
+     * AJAX: Get settings
+     */
+    public function ajax_get_settings() {
+        $this->verify_request();
+
+        // Check permissions
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_send_json_error( array( 'message' => esc_html__( 'Insufficient permissions', 'coupolic' ) ) );
+        }
+
+        $settings = get_option( 'coupolic_settings', $this->get_default_settings() );
+        wp_send_json_success( array( 'settings' => $settings ) );
+    }
+
+    /**
+     * Get default settings
+     */
+    private function get_default_settings() {
+        return array(
+            'user_limits' => array(
+                'administrator' => array(
+                    'max_coupons_per_batch' => 1000,
+                    'max_coupons_per_day' => 5000,
+                    'max_coupons_total' => 50000,
+                ),
+                'shop_manager' => array(
+                    'max_coupons_per_batch' => 100,
+                    'max_coupons_per_day' => 500,
+                    'max_coupons_total' => 5000,
+                ),
+            ),
+            'data_retention' => array(
+                'log_retention_days' => 90,
+                'auto_delete_logs' => false,
+                'cleanup_expired_coupons' => false,
+            ),
+            'generator_settings' => array(
+                'default_quantity' => 10,
+                'default_prefix' => 'COUPON',
+                'default_character_count' => 5,
+                'allow_bulk_generation' => true,
+            ),
+        );
     }
 }

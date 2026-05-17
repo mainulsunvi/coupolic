@@ -25,7 +25,7 @@ export function useWizardState() {
   const formData = reactive({
     // Basic settings
     discount_type: 'fixed_cart',
-    coupon_amount: 0,
+    coupon_amount: 10,
     description: '',
     free_shipping: false,
 

@@ -1,5 +1,5 @@
 <script setup>
-import { inject } from 'vue'
+import { inject, computed, onMounted, watch } from 'vue'
 import DateTime from '@/components/fields/DateTime.vue'
 import CheckBox from '@/components/fields/CheckBox.vue'
 import { useWizardState } from '@/composables/useWizardState.js'
@@ -8,10 +8,39 @@ import { useValidation } from '@/composables/useValidation.js'
 const wizardState = useWizardState()
 const validation = useValidation()
 
+// Get error and warning for expiry date
+const expiryDateError = computed(function() {
+  return validation.errors.value.expiry_date || ''
+})
+
+const expiryDateWarning = computed(function() {
+  return validation.warnings.value?.expiry_date || ''
+})
+
+function checkAllWarnings() {
+  validation.checkWarnings(wizardState.formData)
+}
+
+// Watch for changes in form data and check warnings
+watch(function() {
+  return wizardState.formData
+}, function() {
+  checkAllWarnings()
+}, { deep: true })
+
 function handleFieldChange(field, value) {
   wizardState.updateFormData(field, value)
-  validation.validateField(field, value, wizardState.formData.value)
+  validation.validateField(field, value, wizardState.formData)
+  checkAllWarnings()
 }
+
+// Check warnings on component mount
+onMounted(function() {
+  checkAllWarnings()
+  // Debug logging
+  console.log('DateShipping warnings:', validation.warnings.value)
+  console.log('Expiry date warning:', expiryDateWarning.value)
+})
 </script>
 
 <template>
@@ -24,7 +53,9 @@ function handleFieldChange(field, value) {
         name="expiry_date"
         label="Expiry Date"
         subtitle="The coupons will expire at 00:00:00 of this date (leave empty for no expiry)"
-        :value="wizardState.formData.value.expiry_date"
+        :value="wizardState.formData.expiry_date"
+        :error="expiryDateError"
+        :warning="expiryDateWarning"
         @input="handleFieldChange('expiry_date', $event)"
       />
 
@@ -32,14 +63,10 @@ function handleFieldChange(field, value) {
         name="free_shipping"
         label="Allow Free Shipping"
         subtitle="Check this box if the coupon grants free shipping. A free shipping method must be enabled in your shipping zone."
-        :value="wizardState.formData.value.free_shipping"
+        :value="wizardState.formData.free_shipping"
         @input="handleFieldChange('free_shipping', $event)"
       />
     </form>
-
-    <div class="milestone-save">
-      <p>💾 Your progress will be auto-saved after completing this step.</p>
-    </div>
   </div>
 </template>
 

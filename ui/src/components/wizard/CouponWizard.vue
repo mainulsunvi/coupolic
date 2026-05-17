@@ -66,63 +66,30 @@ function loadExistingDraft() {
   if (savedDraft) {
     try {
       const draftData = JSON.parse(savedDraft)
-      wizardState.updateMultipleFields(draftData)
-      wizardState.setDraftId(draftData.id)
+      // Remove the id field before updating form data
+      const { id, ...formData } = draftData
+      wizardState.updateMultipleFields(formData)
+      wizardState.setDraftId(id || null)
     } catch (error) {
       console.error('Failed to parse saved draft:', error)
     }
   }
 }
 
-function saveDraft() {
-  const data = new FormData()
-  data.append('action', 'coupolic_save_draft')
-  data.append('nonce', coupolic.nonce)
-
-  Object.keys(wizardState.formData.value).forEach(function(key) {
-    const value = wizardState.formData.value[key]
-    if (Array.isArray(value)) {
-      data.append(key, JSON.stringify(value))
-    } else {
-      data.append(key, value)
-    }
-  })
-
-  fetch(coupolic.ajax_url, {
-    method: 'POST',
-    body: data
-  })
-  .then(function(response) {
-    return response.json()
-  })
-  .then(function(result) {
-    if (result.success) {
-      wizardState.setDraftId(result.data.draft_id)
-      wizardState.clearUnsavedChanges()
-      alert('Draft saved successfully!')
-    } else {
-      alert('Failed to save draft: ' + result.data.message)
-    }
-  })
-  .catch(function(error) {
-    console.error('Failed to save draft:', error)
-    alert('Failed to save draft')
-  })
-}
-
 function handleNextClick() {
   // Validate current step
   const currentStep = wizardState.currentStep.value
-  const isValid = validation.validateStep(currentStep, wizardState.formData.value)
+  console.log('Current step:', currentStep)
+  console.log('Form data:', wizardState.formData)
+  console.log('Validation errors:', validation.errors.value)
+
+  const isValid = validation.validateStep(currentStep, wizardState.formData)
+
+  console.log('Is valid:', isValid)
 
   if (!isValid) {
-    alert('Please fix the errors before proceeding')
+    // Don't proceed if validation fails, but don't show alert
     return
-  }
-
-  // Check for milestone saves
-  if (currentStep === 2 || currentStep === 4) {
-    saveDraft()
   }
 
   wizardState.goToNextStep()
@@ -140,7 +107,7 @@ function handleStepClick(stepNumber) {
     // Validate all steps up to the target step
     let canProceed = true
     for (let i = wizardState.currentStep.value; i < stepNumber; i++) {
-      if (!validation.validateStep(i, wizardState.formData.value)) {
+      if (!validation.validateStep(i, wizardState.formData)) {
         canProceed = false
         break
       }
@@ -148,9 +115,8 @@ function handleStepClick(stepNumber) {
 
     if (canProceed) {
       wizardState.setCurrentStep(stepNumber)
-    } else {
-      alert('Please complete and validate current step first')
     }
+    // If can't proceed, just don't change step - no alert needed
   }
 }
 
@@ -167,9 +133,11 @@ function getCurrentStepComponent() {
 }
 
 function saveToLocalStorage() {
+  // Convert reactive proxy to plain object for localStorage
+  const plainFormData = JSON.parse(JSON.stringify(wizardState.formData))
   localStorage.setItem('coupolic_draft', JSON.stringify({
-    id: wizardState.draftId.value,
-    ...wizardState.formData.value
+    id: wizardState.draftId,
+    ...plainFormData
   }))
 }
 </script>
@@ -191,24 +159,25 @@ function saveToLocalStorage() {
       :can-go-next="wizardState.canGoNext.value"
       :is-last-step="wizardState.isLastStep.value"
       :current-step="wizardState.currentStep.value"
-      :has-unsaved-changes="wizardState.hasUnsavedChanges.value"
       @next="handleNextClick"
       @back="handleBackClick"
-      @save-draft="saveDraft"
-      @save-local="saveToLocalStorage"
     />
   </div>
 </template>
 
 <style scoped>
 .coupolic-wizard {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.5rem;
 }
 
 .wizard-content {
   min-height: 400px;
-  margin: 20px 0;
+  margin: 1.5rem 0;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--border-light);
 }
 </style>

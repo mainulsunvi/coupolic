@@ -37,9 +37,10 @@ const router = createRouter({
       name: 'logs',
       component: LogsView,
     },
+    // NEW: Settings route
     {
-      path: '/logs/settings',
-      name: 'logs-settings',
+      path: '/settings',
+      name: 'settings',
       component: LogsSettings,
     },
     {

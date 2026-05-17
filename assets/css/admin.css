@@ -6,7 +6,7 @@
  @import url(base.css);
 
 .coupolic-wrap {
-    max-width: 800px;
+    /* max-width: auto; */
     margin: 20px 0px;
     font-family: Inter !important;
 }
@@ -123,6 +123,10 @@
 .button#generate-coupons:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.milestone-save {
+    display: none;;
 }
 
 /* Loading spinner */

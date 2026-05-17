@@ -64,9 +64,10 @@ class Coupolic_Generator {
                     'link' => admin_url( 'post.php?post=' . $new_coupon_id . '&action=edit' ),
                 );
 
-                // Update progress
+                // Update progress with current coupon info
                 $this->update_progress( $batch_id, $i, $quantity, 'generating',
-                    sprintf( 'Generated coupon %d of %d', $i, $quantity )
+                    sprintf( 'Generated coupon %d of %d', $i, $quantity ),
+                    $generated_coupons
                 );
             }
 
@@ -129,74 +130,81 @@ class Coupolic_Generator {
             update_post_meta( $coupon_id, 'maximum_amount', floatval( $data['maximum_amount'] ) );
         }
 
-        // Product restrictions
-        if ( ! empty( $data['product_ids'] ) ) {
-            update_post_meta( $coupon_id, 'product_ids', explode( ',', $data['product_ids'] ) );
-        } else {
-            update_post_meta( $coupon_id, 'product_ids', array() );
-        }
+        // Helper function to parse array data
+        $parse_array = function( $value ) {
+            if ( is_array( $value ) ) {
+                return $value;
+            }
+            if ( is_string( $value ) ) {
+                // Check if it's JSON encoded
+                $decoded = json_decode( $value, true );
+                if ( is_array( $decoded ) ) {
+                    return $decoded;
+                }
+                // Otherwise, split by comma and trim whitespace
+                $parts = explode( ',', $value );
+                return array_map( 'trim', array_filter( $parts ) );
+            }
+            return array();
+        };
 
-        if ( ! empty( $data['exclude_product_ids'] ) ) {
-            update_post_meta( $coupon_id, 'exclude_product_ids', explode( ',', $data['exclude_product_ids'] ) );
-        } else {
-            update_post_meta( $coupon_id, 'exclude_product_ids', array() );
-        }
+        // Product restrictions
+        $product_ids = ! empty( $data['product_ids'] ) ? $parse_array( $data['product_ids'] ) : array();
+        update_post_meta( $coupon_id, 'product_ids', $product_ids );
+
+        $exclude_product_ids = ! empty( $data['exclude_product_ids'] ) ? $parse_array( $data['exclude_product_ids'] ) : array();
+        update_post_meta( $coupon_id, 'exclude_product_ids', $exclude_product_ids );
 
         // Category restrictions
-        if ( ! empty( $data['product_categories'] ) ) {
-            update_post_meta( $coupon_id, 'product_categories', explode( ',', $data['product_categories'] ) );
-        } else {
-            update_post_meta( $coupon_id, 'product_categories', array() );
-        }
+        $product_categories = ! empty( $data['product_categories'] ) ? $parse_array( $data['product_categories'] ) : array();
+        update_post_meta( $coupon_id, 'product_categories', $product_categories );
 
-        if ( ! empty( $data['exclude_product_categories'] ) ) {
-            update_post_meta( $coupon_id, 'exclude_product_categories', explode( ',', $data['exclude_product_categories'] ) );
-        } else {
-            update_post_meta( $coupon_id, 'exclude_product_categories', array() );
-        }
+        $exclude_product_categories = ! empty( $data['exclude_product_categories'] ) ? $parse_array( $data['exclude_product_categories'] ) : array();
+        update_post_meta( $coupon_id, 'exclude_product_categories', $exclude_product_categories );
 
         // Brand restrictions (custom taxonomy)
-        if ( ! empty( $data['product_brands'] ) ) {
-            update_post_meta( $coupon_id, 'product_brands', explode( ',', $data['product_brands'] ) );
-        }
+        $product_brands = ! empty( $data['product_brands'] ) ? $parse_array( $data['product_brands'] ) : array();
+        update_post_meta( $coupon_id, 'product_brands', $product_brands );
 
-        if ( ! empty( $data['exclude_product_brands'] ) ) {
-            update_post_meta( $coupon_id, 'exclude_product_brands', explode( ',', $data['exclude_product_brands'] ) );
-        }
+        $exclude_product_brands = ! empty( $data['exclude_product_brands'] ) ? $parse_array( $data['exclude_product_brands'] ) : array();
+        update_post_meta( $coupon_id, 'exclude_product_brands', $exclude_product_brands );
 
         // Email restrictions
-        if ( ! empty( $data['customer_email'] ) ) {
-            update_post_meta( $coupon_id, 'customer_email', explode( ',', $data['customer_email'] ) );
-        } else {
-            update_post_meta( $coupon_id, 'customer_email', array() );
-        }
+        $customer_emails = ! empty( $data['customer_email'] ) ? $parse_array( $data['customer_email'] ) : array();
+        update_post_meta( $coupon_id, 'customer_email', $customer_emails );
 
         // Additional settings
         update_post_meta( $coupon_id, 'free_shipping', ( $data['free_shipping'] ?? false ) ? 'yes' : 'no' );
         update_post_meta( $coupon_id, 'exclude_sale_items', ( $data['exclude_sale_items'] ?? false ) ? 'yes' : 'no' );
         update_post_meta( $coupon_id, 'usage_limit_per_user', absint( $data['usage_limit_per_user'] ?? 0 ) );
+
+        // Debug logging
+        error_log( 'Coupolic: Added coupon meta for ID ' . $coupon_id );
+        error_log( 'Coupolic: Product IDs: ' . implode( ',', $product_ids ) );
+        error_log( 'Coupolic: Categories: ' . implode( ',', $product_categories ) );
     }
 
     /**
      * Update generation progress
      */
-    private function update_progress( $batch_id, $current, $total, $status, $message ) {
-        update_option( 'coupolic_progress_' . $batch_id, array(
+    private function update_progress( $batch_id, $current, $total, $status, $message, $generated_coupons = array() ) {
+        $progress_data = array(
             'current' => $current,
             'total' => $total,
             'status' => $status,
             'message' => $message,
             'percentage' => ( $current / $total ) * 100,
-        ) );
+        );
+
+        // Add generated coupons if available
+        if ( ! empty( $generated_coupons ) ) {
+            $progress_data['generated_coupons'] = $generated_coupons;
+        }
+
+        update_option( 'coupolic_progress_' . $batch_id, $progress_data );
 
         // Set option to expire in 1 hour
-        set_transient( 'coupolic_progress_' . $batch_id, array(
-            'current' => $current,
-            'total' => $total,
-            'status' => $status,
-            'message' => $message,
-            'percentage' => ( $current / $total ) * 100,
-        ), 3600 );
+        set_transient( 'coupolic_progress_' . $batch_id, $progress_data, 3600 );
     }
 
     /**

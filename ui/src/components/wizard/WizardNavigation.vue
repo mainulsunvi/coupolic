@@ -1,6 +1,7 @@
 <script setup>
 import { inject } from 'vue'
 import { Icon } from '@iconify/vue'
+import { RouterLink } from 'vue-router'
 
 const props = defineProps({
   canGoBack: {
@@ -19,13 +20,9 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  hasUnsavedChanges: {
-    type: Boolean,
-    default: false,
-  },
 })
 
-const emit = defineEmits(['back', 'next', 'save-draft', 'save-local'])
+const emit = defineEmits(['back', 'next', 'generate'])
 
 function handleBackClick() {
   emit('back')
@@ -38,37 +35,15 @@ function handleNextClick() {
     emit('next')
   }
 }
-
-function handleSaveDraft() {
-  emit('save-draft')
-}
-
-function handleSaveLocal() {
-  emit('save-local')
-}
 </script>
 
 <template>
   <div class="wizard-navigation">
     <div class="navigation-left">
-      <button
-        v-if="hasUnsavedChanges"
-        @click="handleSaveLocal"
-        class="nav-button save-local-button"
-        type="button"
-      >
-        <Icon icon="proicons:save" width="16" height="16" />
-        Save Locally
-      </button>
-
-      <button
-        @click="handleSaveDraft"
-        class="nav-button save-draft-button"
-        type="button"
-      >
-        <Icon icon="proicons:cloud-save" width="16" height="16" />
-        Save Draft
-      </button>
+      <RouterLink to="/logs" class="nav-link history-link">
+        <Icon icon="proicons:database" width="16" height="16" />
+        View History
+      </RouterLink>
     </div>
 
     <div class="navigation-right">
@@ -101,68 +76,68 @@ function handleSaveLocal() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  margin-top: 30px;
-  gap: 20px;
+  padding: 1rem 0;
+  margin-top: 2rem;
 }
 
 .navigation-left,
 .navigation-right {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.history-link:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: var(--info-bg);
+  text-decoration: none;
 }
 
 .nav-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.back-button {
-  background: white;
-  color: #666;
-  border: 1px solid #ddd;
+  transition: all var(--transition-base);
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .back-button:hover:not(:disabled) {
-  background: #f5f5f5;
-  border-color: #ccc;
+  background: var(--bg-secondary);
+  border-color: var(--primary-light);
 }
 
 .next-button {
-  background: #4CAF50;
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
   color: white;
 }
 
 .next-button:hover:not(:disabled) {
-  background: #45a049;
-}
-
-.save-draft-button {
-  background: #2196F3;
-  color: white;
-}
-
-.save-draft-button:hover {
-  background: #1976D2;
-}
-
-.save-local-button {
-  background: #FF9800;
-  color: white;
-}
-
-.save-local-button:hover {
-  background: #F57C00;
+  background: var(--accent-blue-dark);
+  border-color: var(--accent-blue-dark);
 }
 
 .nav-button:disabled {
@@ -170,15 +145,21 @@ function handleSaveLocal() {
   cursor: not-allowed;
 }
 
+.nav-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
 @media (max-width: 768px) {
   .wizard-navigation {
     flex-direction: column;
-    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem 0;
   }
 
   .navigation-left,
   .navigation-right {
     flex-direction: column;
+    width: 100%;
   }
 
   .nav-button {

@@ -17,7 +17,8 @@ export function useValidation() {
     coupon_amount: {
       required: true,
       validate: function(value) {
-        return !isNaN(value) && parseFloat(value) > 0
+        const numValue = parseFloat(value)
+        return !isNaN(numValue) && numValue > 0
       },
       message: 'Coupon amount must be greater than 0',
     },
@@ -144,23 +145,35 @@ export function useValidation() {
     const foundWarnings = {}
 
     // Warn if no expiry date set
-    if (!formData.expiry_date) {
+    if (!formData.expiry_date || formData.expiry_date === '') {
       foundWarnings.expiry_date = 'Consider setting an expiry date for better security'
     }
 
     // Warn if no usage restrictions
     if ((!formData.minimum_amount || formData.minimum_amount === '') &&
-        (!formData.product_ids || formData.product_ids.length === 0)) {
+        (!formData.product_ids || formData.product_ids.length === 0) &&
+        (!formData.category_ids || formData.category_ids.length === 0)) {
       foundWarnings.restrictions = 'Consider adding usage restrictions for better control'
     }
 
     // Warn about large quantities
-    if (formData.quantity > 50) {
+    if (formData.quantity && formData.quantity > 50) {
       foundWarnings.quantity = 'Large batch sizes may take longer to generate'
+    }
+
+    // Warn about high discount amounts
+    if (formData.discount_type === 'percent' && formData.coupon_amount > 50) {
+      foundWarnings.coupon_amount = 'High percentage discounts may impact profitability'
     }
 
     warnings.value = foundWarnings
     return foundWarnings
+  }
+
+  // Check warnings for specific field
+  function checkFieldWarning(fieldName, formData) {
+    checkWarnings(formData)
+    return warnings.value[fieldName] || ''
   }
 
   // Clear all errors
@@ -201,6 +214,7 @@ export function useValidation() {
     validateAll,
     validateStep,
     checkWarnings,
+    checkFieldWarning,
     clearErrors,
     clearFieldError,
   }

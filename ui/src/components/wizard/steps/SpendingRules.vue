@@ -10,7 +10,7 @@ const validation = useValidation()
 
 function handleFieldChange(field, value) {
   wizardState.updateFormData(field, value)
-  validation.validateField(field, value, wizardState.formData.value)
+  validation.validateField(field, value, wizardState.formData)
 }
 </script>
 
@@ -26,7 +26,7 @@ function handleFieldChange(field, value) {
         label="Minimum Spend"
         subtitle="Minimum order subtotal required to use the coupon (leave empty for no minimum)"
         placeholder="No minimum"
-        :value="wizardState.formData.value.minimum_amount"
+        :value="wizardState.formData.minimum_amount"
         @input="handleFieldChange('minimum_amount', $event)"
       />
 
@@ -36,7 +36,7 @@ function handleFieldChange(field, value) {
         label="Maximum Spend"
         subtitle="Maximum order subtotal allowed to use the coupon (leave empty for no maximum)"
         placeholder="No maximum"
-        :value="wizardState.formData.value.maximum_amount"
+        :value="wizardState.formData.maximum_amount"
         @input="handleFieldChange('maximum_amount', $event)"
       />
 
@@ -44,7 +44,7 @@ function handleFieldChange(field, value) {
         name="individual_use"
         label="Individual Use Only"
         subtitle="Check this box if the coupon cannot be used in conjunction with other coupons"
-        :value="wizardState.formData.value.individual_use"
+        :value="wizardState.formData.individual_use"
         @input="handleFieldChange('individual_use', $event)"
       />
 
@@ -52,14 +52,10 @@ function handleFieldChange(field, value) {
         name="exclude_sale_items"
         label="Exclude Sale Items"
         subtitle="Check this box if the coupon should not apply to items that are already on sale"
-        :value="wizardState.formData.value.exclude_sale_items"
+        :value="wizardState.formData.exclude_sale_items"
         @input="handleFieldChange('exclude_sale_items', $event)"
       />
     </form>
-
-    <div class="milestone-save">
-      <p>💾 Your progress will be auto-saved after completing this step.</p>
-    </div>
   </div>
 </template>
 

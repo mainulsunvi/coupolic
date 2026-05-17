@@ -10,7 +10,7 @@
      * Plugin Name: Coupolic - Ultimate Bulk Coupon Generator for WooCommerce
      * Plugin URI: https://wordpress.org/plugins/coupolic/
      * Description: Coupon Management Plugin for WordPress
-     * Version: 1.0.2
+     * Version: 1.2.0
      * Requires at least: 6.0
      * Requires PHP: 7.4
      * Author: Mainul Sunvi
